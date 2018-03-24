@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Newtonsoft.Json;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class QuickPlayGameController : MonoBehaviour
 {
@@ -26,7 +27,6 @@ public class QuickPlayGameController : MonoBehaviour
     public int tauntLeft;
     public int tauntRight;
 
-    private UserSession userSessionObject;
     private QuickPlaySessionInfo quickPlaySessionInfoObject;
     private QuickPlaySessionData quickPlaySessionDataObject;
 
@@ -43,9 +43,12 @@ public class QuickPlayGameController : MonoBehaviour
 
     private bool myMove;
 
+    public Text winnerText;
+    public GameObject gameOverBar;
+
     private void Awake()
     {
-        userSessionObject = JsonConvert.DeserializeObject<UserSession>(PlayerPrefs.GetString("UserSession", ""));
+        gameOverBar.SetActive(false);
         quickPlaySessionInfoObject = JsonConvert.DeserializeObject<QuickPlaySessionInfo>(PlayerPrefs.GetString("QuickPlaySessionInfo", ""));
 
         firstPlayer = quickPlaySessionInfoObject.firstPlayer;
@@ -80,8 +83,8 @@ public class QuickPlayGameController : MonoBehaviour
         players[4].name = quickPlaySessionInfoObject.opponentCharNames[1];
         players[5].name = quickPlaySessionInfoObject.opponentCharNames[2];
 
-        myName.text = userSessionObject.login;
-        myRating.text = userSessionObject.rating.ToString();
+        myName.text = Data.userSession.login;
+        myRating.text = Data.userSession.rating.ToString();
         oppName.text = quickPlaySessionInfoObject.opponentName;
         oppRating.text = quickPlaySessionInfoObject.opponentRating.ToString();
     }
@@ -98,6 +101,17 @@ public class QuickPlayGameController : MonoBehaviour
         {
             skillBar.SetActive(false);
         }
+        if (quickPlaySessionData.gameOver)
+        {
+            gameOverBar.SetActive(true);
+            winnerText.text = quickPlaySessionData.winner + " won!";
+        }
+
+        foreach (MoveLog log in quickPlaySessionData.moveLogs)
+        {
+            Debug.Log(JsonConvert.SerializeObject(log));
+        }
+
         CheckTargets();
         UpdateUI();
     }
@@ -188,6 +202,11 @@ public class QuickPlayGameController : MonoBehaviour
             skillBar.SetActive(false);
             CheckTargets();
         }
+    }
+
+    public void ExitSession()
+    {
+        SceneManager.LoadScene(0);
     }
 
 }

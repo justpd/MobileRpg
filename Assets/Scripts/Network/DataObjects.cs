@@ -14,6 +14,7 @@ public class UserRegistrationData
     public string login;
     public string password;
     public string email;
+    public string faction = "Faith";
 }
 
 public class QuickPlaySessionInfo
@@ -39,8 +40,26 @@ public class QuickPlaySessionData
     public List<float> HealthData = new List<float>();
     public List<float> TurnMeterData = new List<float>();
 
-
     public string currentCharId;
+
+    public bool gameOver;
+    public string winner;
+
+    public List<MoveLog> moveLogs = new List<MoveLog>();
+}
+
+public class MoveLog
+{
+    public string current;
+    public string target;
+
+    public bool isCritical = false;
+    public bool isEvaded = false;
+
+    public string type;
+
+    public int damage = 0;
+    public int heal = 0;
 }
 
 public class QuickPlayMoveData

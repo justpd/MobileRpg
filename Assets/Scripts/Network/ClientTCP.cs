@@ -168,6 +168,15 @@ public class ClientTCP : MonoBehaviour {
         buffer.Dispose ();
     }
 
+    public static void Send_UserLogout()
+    {
+        PacketBuffer buffer = new PacketBuffer();
+        buffer.WriteInt((int)ClientPackets.C_RequestUserLogout);
+        buffer.WriteString(Data.userSession.login);
+        SendData(buffer.ToArray());
+        buffer.Dispose();
+    }
+
     public static void Send_RequestUserRegistration (string login, string password, string email) {
         PacketBuffer buffer = new PacketBuffer ();
         buffer.WriteInt ((int) ClientPackets.C_RequestUserRegistration);
@@ -182,15 +191,13 @@ public class ClientTCP : MonoBehaviour {
         buffer.Dispose ();
     }
 
-    public static void Send_RequestUserAccountDataUpdate (UserSession userSession) {
-        PacketBuffer buffer = new PacketBuffer ();
-        buffer.WriteInt ((int) ClientPackets.C_RequestUserAccountDataUpdate);
-
-        string json = JsonConvert.SerializeObject (userSession);
-        Debug.Log(json);
-        buffer.WriteString (json);
-        SendData (buffer.ToArray ());
-        buffer.Dispose ();
+    public static void Send_RequestUserAccountDataUpdate (string login) {
+        PacketBuffer buffer = new PacketBuffer();
+        buffer.WriteInt((int)ClientPackets.C_RequestUserAccountDataUpdate);
+        Debug.Log("Updating userInfo");
+        buffer.WriteString(login);
+        SendData(buffer.ToArray());
+        buffer.Dispose();
     }
 
     public static void Send_RequestEnterQuickPlay(UserSession userSession)
