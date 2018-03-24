@@ -12,7 +12,6 @@ public class Menu : MonoBehaviour {
     // Login
     public InputField L_login;
     public InputField L_password;
-    public Text H_login;
     // Register
     public InputField R_login;
     public InputField R_password;
@@ -25,15 +24,10 @@ public class Menu : MonoBehaviour {
     public Text U_rating;
     public Text U_energy;
 
-    public Text U_char_1;
-    public Text U_char_2;
-    public Text U_char_3;
-
     public Image U_progressBar;
-
     private bool loggedIn = false;
 
-    public Image icon;
+    public GameObject menuBar;
 
     // Start
 
@@ -44,37 +38,14 @@ public class Menu : MonoBehaviour {
             ShowLoginWindow();
         else
         {
-            H_login.text = "LOGOUT";
             loggedIn = true;
+            menuBar.transform.position += new Vector3(105,0);
             ClientTCP.Send_RequestUserAccountDataUpdate(Data.userSession.login);
             WindowSetActive(3);
         }
-
-
     }
 
-
-    void Update()
-    {
-        if (Input.GetKey(KeyCode.Tab))
-        {
-            if (L_login.isFocused)
-            {
-                L_password.Select();
-            }
-            else if (L_password.isFocused)
-            {
-                LoginUser();
-            }
-            //for debug
-            else if (loggedIn)
-            {
-                QuickGame();
-            }
-        }
-    }
-
-        // Base functions
+    // Base functions
     public void RegisterUser()
     {
         ClientTCP.Send_RequestUserRegistration(R_login.text, R_password.text, R_email.text);
@@ -94,6 +65,7 @@ public class Menu : MonoBehaviour {
 
     public void QuickGame()
     {
+        menuBar.transform.position -= new Vector3(105, 0);
         ClientTCP.Send_RequestEnterQuickPlay(Data.userSession);
         WindowSetActive(4);
     }
@@ -111,7 +83,6 @@ public class Menu : MonoBehaviour {
 
     public void ShowUserAccountWindow()
     {
-        H_login.text = "LOGOUT";
         loggedIn = true;
 
         L_login.text = "";
@@ -127,27 +98,27 @@ public class Menu : MonoBehaviour {
     public void UpdateUserAccountWindow()
     {
         U_login.text = Data.userSession.login;
-        U_gold.text = "Gold: " + Data.userSession.gold.ToString();
-        U_energy.text = "Energy: " + Data.userSession.energy.ToString();
-        U_rating.text = "Rating: " + Data.userSession.rating.ToString();
-        U_char_1.text = Data.userSession.mainTeam[0].name + "(" + Data.userSession.mainTeam[0].power + ", lvl:" + Data.userSession.mainTeam[0].lvl + ")";
-        U_char_2.text = Data.userSession.mainTeam[1].name + "(" + Data.userSession.mainTeam[1].power + ", lvl:" + Data.userSession.mainTeam[1].lvl + ")";
-        U_char_3.text = Data.userSession.mainTeam[2].name + "(" + Data.userSession.mainTeam[2].power + ", lvl:" + Data.userSession.mainTeam[2].lvl + ")";
+        U_gold.text =  Data.userSession.gold.ToString();
+        U_energy.text = Data.userSession.energy.ToString();
+        U_rating.text = Data.userSession.rating.ToString();
+        //U_char_1.text = Data.userSession.mainTeam[0].name + "(" + Data.userSession.mainTeam[0].power + ", lvl:" + Data.userSession.mainTeam[0].lvl + ")";
+        //U_char_2.text = Data.userSession.mainTeam[1].name + "(" + Data.userSession.mainTeam[1].power + ", lvl:" + Data.userSession.mainTeam[1].lvl + ")";
+        //U_char_3.text = Data.userSession.mainTeam[2].name + "(" + Data.userSession.mainTeam[2].power + ", lvl:" + Data.userSession.mainTeam[2].lvl + ")";
 
         U_lvl.text = (Data.userSession.exp / 100).ToString();
         U_progress = (float)((Data.userSession.exp % 100) * 1.7);
         U_progressBar.GetComponent<RectTransform>().sizeDelta = new Vector2(U_progress, 20);
     }
 
-
     public void ShowLoginWindow()
     {
         if (loggedIn)
         {
+            loggedIn = false;
+            menuBar.transform.position -= new Vector3(105, 0);
             ClientTCP.Send_UserLogout();
             Data.userSession = null;
             U_login.text = "Login";
-            H_login.text = "LOGIN";
         }
         WindowSetActive(1);
     }
@@ -166,6 +137,7 @@ public class Menu : MonoBehaviour {
     private void OnUserLogin(UserSession userSession)
     {
         Data.userSession = userSession;
+        menuBar.transform.position += new Vector3(105, 0);
         ShowUserAccountWindow();
     }
 
@@ -187,8 +159,6 @@ public class Menu : MonoBehaviour {
     }
 
 
-    // Update User Session
-   
     /*
     public void AddGold()
     {
@@ -206,7 +176,6 @@ public class Menu : MonoBehaviour {
         ClientTCP.Send_RequestUserAccountDataUpdate(userSessionObject);
         UpdateUserAccountWindow();
     }
-    */
 
     public void SetImage(string base64Pic)
     {
@@ -215,5 +184,6 @@ public class Menu : MonoBehaviour {
         tex.LoadImage(b64_bytes);
         icon.sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f);
     }
+    */
 
 }
