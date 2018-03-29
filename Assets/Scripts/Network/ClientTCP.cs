@@ -155,13 +155,14 @@ public class ClientTCP : MonoBehaviour {
         buffer.Dispose ();
     }
 
-    public static void Send_Base64Image (string b64str, int scale) {
+    public static void Send_Base64Image (string b64str, int scale, string login) {
         PacketBuffer buffer = new PacketBuffer ();
         buffer.WriteInt ((int) ClientPackets.C_RequestUpdateImage);
         buffer.WriteString (b64str);
         UserImageData userImageData = new UserImageData {
             b64str = b64str,
-            scale = scale
+            scale = scale,
+            login = login
         };
         string json = JsonConvert.SerializeObject (userImageData);
         buffer.WriteString (json);

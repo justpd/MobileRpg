@@ -80,7 +80,7 @@ public class PrePainter : MonoBehaviour {
         bytes = texture.EncodeToPNG();
         string b64str = System.Convert.ToBase64String(bytes);
 		
-        ClientTCP.Send_Base64Image(b64str, scale);
+        ClientTCP.Send_Base64Image(b64str, scale, Data.userSession.login);
 
     }
 

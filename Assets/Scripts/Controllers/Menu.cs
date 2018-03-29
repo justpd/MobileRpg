@@ -167,6 +167,7 @@ public class Menu : MonoBehaviour {
         {
 		    filterMode = FilterMode.Point,
         };
+        Debug.Log(userImageData);
         texture.LoadImage(b64_bytes);
         userImage.sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
     }
