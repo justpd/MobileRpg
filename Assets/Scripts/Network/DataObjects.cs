@@ -91,5 +91,6 @@ public class UserSession
 public class UserImageData{
     public string b64str;
     public int scale;
+    public string login;
 }
 
