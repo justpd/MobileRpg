@@ -12,6 +12,7 @@ public class ClientHandleNetworkData : MonoBehaviour {
     private delegate void Packet_ (byte[] data);
     private static Dictionary<int, Packet_> Packets;
 
+    private static bool EventUserSessionUpdate = false;
     private static bool EventUserLogin = false;
     private static bool EventUserRegisttration = false;
     private static bool EventQuickPlay = false;
@@ -31,16 +32,25 @@ public class ClientHandleNetworkData : MonoBehaviour {
     void Update () {
         if (EventUserLogin)
         {
+            ClientTCP.UpdateController();
             ClientTCP.ClientController.SendMessage("OnUserLogin", activeUserSession);
             EventUserLogin = false;
         }
+        else if (EventUserSessionUpdate)
+        {
+            ClientTCP.UpdateController();
+            ClientTCP.ClientController.SendMessage("OnUserSessionUpdate", activeUserSession);
+            EventUserSessionUpdate = false;
+        }
         else if (EventUserRegisttration)
         {
+            ClientTCP.UpdateController();
             ClientTCP.ClientController.SendMessage("OnUserRegister");
             EventUserRegisttration = false;
         }
         else if (EventQuickPlayInfo)
         {
+            ClientTCP.UpdateController();
             ClientTCP.ClientController.SendMessage("OnQuickGameInfo", activeQuickPlaySessionInfo);
             EventQuickPlayInfo = false;
         }
@@ -80,7 +90,11 @@ public class ClientHandleNetworkData : MonoBehaviour {
             {
             (int) ServerPackets.S_SendQuickPlaySessionData,
             Handle_QuickPlaySessionData
-            }
+            },
+            {
+            (int) ServerPackets.S_UpdateUserSessionData,
+            Handle_UserAcountDataUpdate
+            },
         };
 
     }
@@ -122,6 +136,20 @@ public class ClientHandleNetworkData : MonoBehaviour {
         Debug.Log (msg);
         activeUserSession = JsonConvert.DeserializeObject<UserSession> (msg);
         EventUserLogin = true;
+    }
+
+    public static void Handle_UserAcountDataUpdate(byte[] data)
+    {
+        PacketBuffer buffer = new PacketBuffer();
+        buffer.WriteBytes(data);
+        int packetNum = buffer.ReadInteger();
+        string msg = buffer.ReadString();
+        buffer.Dispose();
+
+        //add your code you want to execute here;
+        Debug.Log(msg);
+        activeUserSession = JsonConvert.DeserializeObject<UserSession>(msg);
+        EventUserSessionUpdate = true;
     }
 
     public static void Handle_AbortUserLogin (byte[] data) {
@@ -171,6 +199,7 @@ public class ClientHandleNetworkData : MonoBehaviour {
         activeQuickPlaySessionInfo = JsonConvert.DeserializeObject<QuickPlaySessionInfo>(msg);
         EventQuickPlayInfo = true;
     }
+
     public static void Handle_QuickPlaySessionData(byte[] data)
     {
         PacketBuffer buffer = new PacketBuffer();

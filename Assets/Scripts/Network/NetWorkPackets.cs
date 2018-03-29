@@ -12,6 +12,7 @@ public enum ServerPackets
     S_AbortUserRegistration = 606005,
     S_SendQuickPlaySessionInfo = 606006,
     S_SendQuickPlaySessionData = 606007,
+    S_UpdateUserSessionData = 606008
 }
 
 // Client -> Server
@@ -23,5 +24,5 @@ public enum ClientPackets
     C_RequestUserAccountDataUpdate = 505004,
     C_RequestEnterQuickPlay = 505005,
     C_QuickPlayMoveData = 505006,
-    С_Test = 5055007,
+    C_RequestUserLogout = 505000,
 }
