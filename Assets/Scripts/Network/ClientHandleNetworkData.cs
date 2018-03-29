@@ -105,7 +105,7 @@ public class ClientHandleNetworkData : MonoBehaviour {
             },
             {
             (int) ServerPackets.S_UpdateUserImage,
-            Handle_UserAcountDataUpdate
+            Handle_ImageUpdate
             },
         };
 
@@ -145,6 +145,7 @@ public class ClientHandleNetworkData : MonoBehaviour {
         buffer.Dispose ();
 
         userImageData = JsonConvert.DeserializeObject<UserImageData>(msg);
+        EventImageUpdate = true;
     }
 
     public static void Handle_ConfirmUserLogin (byte[] data) {
