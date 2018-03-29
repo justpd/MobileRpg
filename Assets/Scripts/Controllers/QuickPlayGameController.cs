@@ -35,7 +35,7 @@ public class QuickPlayGameController : MonoBehaviour
     public Sprite usualStatus;
 
     public string SimulateTarget;
-    private int[] secondPlayerIndexes = {3,4,5,0,1,2};
+    private int[] secondPlayerIndexes = { 3, 4, 5, 0, 1, 2 };
     private string[] myChars = new string[3];
     private string[] opponentChars = new string[3];
 
