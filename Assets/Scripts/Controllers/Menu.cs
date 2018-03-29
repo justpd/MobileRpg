@@ -29,6 +29,8 @@ public class Menu : MonoBehaviour {
 
     public GameObject menuBar;
 
+    public Image userImage;
+
     // Start
 
     private void Awake()
@@ -158,8 +160,28 @@ public class Menu : MonoBehaviour {
         SceneManager.LoadScene(1);
     }
 
+    private void OnImageUpdate(UserImageData userImageData)
+    {
+        byte[] b64_bytes = System.Convert.FromBase64String(userImageData.b64str);
+        Texture2D texture = new Texture2D(userImageData.scale, userImageData.scale)
+        {
+		    filterMode = FilterMode.Point,
+        };
+        texture.LoadImage(b64_bytes);
+        userImage.sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+    }
+
 
     /*
+
+    public void SetImage(string base64Pic)
+    {
+        byte[] b64_bytes = System.Convert.FromBase64String(base64Pic);
+        Texture2D tex = new Texture2D(1, 1);
+        tex.LoadImage(b64_bytes);
+        icon.sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100.0f);
+    }
+
     public void AddGold()
     {
         userSessionObject.gold += 20;

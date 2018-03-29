@@ -38,7 +38,7 @@ public class PrePainter : MonoBehaviour {
 		texture.Apply();
 		Sprite sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
 		GetComponent<Image>().sprite = sprite;
-		FromBase64Image(ToBase64Image());
+
 	}
 	
 	public void Resize(int scale)
@@ -74,21 +74,14 @@ public class PrePainter : MonoBehaviour {
 		GetComponent<Image>().sprite = sprite;
 	}
     
-    public string ToBase64Image()
+    public void ToBase64Image()
     {
 
         bytes = texture.EncodeToPNG();
-
         string b64str = System.Convert.ToBase64String(bytes);
-        return b64str;
+		
+        ClientTCP.Send_Base64Image(b64str, scale);
 
-    }
-
-    public void FromBase64Image(string b64str)
-    {
-        byte[] b64_bytes = System.Convert.FromBase64String(b64str);
-        texture.LoadImage(b64_bytes);
-        GetComponent<Image>().sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
     }
 
 }

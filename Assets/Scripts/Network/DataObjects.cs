@@ -88,4 +88,8 @@ public class UserSession
     public string[] mainTeamNames = new string[3];
 }
 
+public class UserImageData{
+    public string b64str;
+    public int scale;
+}
 

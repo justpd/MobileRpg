@@ -18,10 +18,12 @@ public class ClientHandleNetworkData : MonoBehaviour {
     private static bool EventQuickPlay = false;
     private static bool EventQuickPlayInfo = false;
     private static bool EventQuickPlayData = false;
+    private static bool EventImageUpdate = false;
 
     private static UserSession activeUserSession;
     private static QuickPlaySessionInfo activeQuickPlaySessionInfo;
     private static QuickPlaySessionData activeQuickPlaySessionData;
+    private static UserImageData userImageData;
 
     // Use this for initialization
     void Awake () {
@@ -60,6 +62,12 @@ public class ClientHandleNetworkData : MonoBehaviour {
             ClientTCP.ClientController.SendMessage("OnQuickGameData", activeQuickPlaySessionData);
             EventQuickPlayData = false;
         }
+        else if (EventImageUpdate)
+        {
+            ClientTCP.UpdateController();
+            ClientTCP.ClientController.SendMessage("OnImageUpdate", userImageData);
+            EventImageUpdate = false;
+        }
     }
 
     public static void InitializeNetworkPackages () {
@@ -95,6 +103,10 @@ public class ClientHandleNetworkData : MonoBehaviour {
             (int) ServerPackets.S_UpdateUserSessionData,
             Handle_UserAcountDataUpdate
             },
+            {
+            (int) ServerPackets.S_UpdateUserImage,
+            Handle_UserAcountDataUpdate
+            },
         };
 
     }
@@ -123,6 +135,16 @@ public class ClientHandleNetworkData : MonoBehaviour {
         Debug.Log ("Sever: " + msg);
 
         ClientTCP.Send_ConfirmConnection ();
+    }
+
+    private static void Handle_ImageUpdate (byte[] data) {
+        PacketBuffer buffer = new PacketBuffer ();
+        buffer.WriteBytes (data);
+        int packetNum = buffer.ReadInteger ();
+        string msg = buffer.ReadString ();
+        buffer.Dispose ();
+
+        userImageData = JsonConvert.DeserializeObject<UserImageData>(msg);
     }
 
     public static void Handle_ConfirmUserLogin (byte[] data) {
