@@ -26,8 +26,7 @@ public class QuickPlayGameController : MonoBehaviour
     public int tauntLeft;
     public int tauntRight;
 
-    private UserSession userSessionObject;
-    private QuickPlaySessionInfo quickPlaySessionInfoObject;
+   
     private QuickPlaySessionData quickPlaySessionDataObject;
 
     public Sprite targetStatus;
@@ -45,45 +44,43 @@ public class QuickPlayGameController : MonoBehaviour
 
     private void Awake()
     {
-        userSessionObject = JsonConvert.DeserializeObject<UserSession>(PlayerPrefs.GetString("UserSession", ""));
-        quickPlaySessionInfoObject = JsonConvert.DeserializeObject<QuickPlaySessionInfo>(PlayerPrefs.GetString("QuickPlaySessionInfo", ""));
 
-        firstPlayer = quickPlaySessionInfoObject.firstPlayer;
+        firstPlayer = Data.quickPlaySessionInfo.firstPlayer;
 
-        Debug.Log(JsonConvert.SerializeObject(quickPlaySessionInfoObject));
+        Debug.Log(JsonConvert.SerializeObject(Data.quickPlaySessionInfo));
 
         targetStatus = Resources.Load<Sprite>("Platforms/red_platform");
         currentStatus = Resources.Load<Sprite>("Platforms/blue_platform");
         usualStatus = Resources.Load<Sprite>("Platforms/gray_platform");
 
-        players[0].id = quickPlaySessionInfoObject.myCharIds[0];
-        players[1].id = quickPlaySessionInfoObject.myCharIds[1];
-        players[2].id = quickPlaySessionInfoObject.myCharIds[2];
+        players[0].id = Data.quickPlaySessionInfo.myCharIds[0];
+        players[1].id = Data.quickPlaySessionInfo.myCharIds[1];
+        players[2].id = Data.quickPlaySessionInfo.myCharIds[2];
 
-        myChars[0] = quickPlaySessionInfoObject.myCharIds[0];
-        myChars[1] = quickPlaySessionInfoObject.myCharIds[1];
-        myChars[2] = quickPlaySessionInfoObject.myCharIds[2];
+        myChars[0] = Data.quickPlaySessionInfo.myCharIds[0];
+        myChars[1] = Data.quickPlaySessionInfo.myCharIds[1];
+        myChars[2] = Data.quickPlaySessionInfo.myCharIds[2];
 
-        players[3].id = quickPlaySessionInfoObject.opponentCharIds[0];
-        players[4].id = quickPlaySessionInfoObject.opponentCharIds[1];
-        players[5].id = quickPlaySessionInfoObject.opponentCharIds[2];
+        players[3].id = Data.quickPlaySessionInfo.opponentCharIds[0];
+        players[4].id = Data.quickPlaySessionInfo.opponentCharIds[1];
+        players[5].id = Data.quickPlaySessionInfo.opponentCharIds[2];
 
-        opponentChars[0] = quickPlaySessionInfoObject.opponentCharIds[0];
-        opponentChars[1] = quickPlaySessionInfoObject.opponentCharIds[1];
-        opponentChars[2] = quickPlaySessionInfoObject.opponentCharIds[2];
+        opponentChars[0] = Data.quickPlaySessionInfo.opponentCharIds[0];
+        opponentChars[1] = Data.quickPlaySessionInfo.opponentCharIds[1];
+        opponentChars[2] = Data.quickPlaySessionInfo.opponentCharIds[2];
 
-        players[0].name = quickPlaySessionInfoObject.myCharNames[0];
-        players[1].name = quickPlaySessionInfoObject.myCharNames[1];
-        players[2].name = quickPlaySessionInfoObject.myCharNames[2];
+        players[0].name = Data.quickPlaySessionInfo.myCharNames[0];
+        players[1].name = Data.quickPlaySessionInfo.myCharNames[1];
+        players[2].name = Data.quickPlaySessionInfo.myCharNames[2];
 
-        players[3].name = quickPlaySessionInfoObject.opponentCharNames[0];
-        players[4].name = quickPlaySessionInfoObject.opponentCharNames[1];
-        players[5].name = quickPlaySessionInfoObject.opponentCharNames[2];
+        players[3].name = Data.quickPlaySessionInfo.opponentCharNames[0];
+        players[4].name = Data.quickPlaySessionInfo.opponentCharNames[1];
+        players[5].name = Data.quickPlaySessionInfo.opponentCharNames[2];
 
-        myName.text = userSessionObject.login;
-        myRating.text = userSessionObject.rating.ToString();
-        oppName.text = quickPlaySessionInfoObject.opponentName;
-        oppRating.text = quickPlaySessionInfoObject.opponentRating.ToString();
+        myName.text = Data.userSession.login;
+        myRating.text = Data.userSession.rating.ToString();
+        oppName.text = Data.quickPlaySessionInfo.opponentName;
+        oppRating.text = Data.quickPlaySessionInfo.opponentRating.ToString();
     }
 
     private void OnQuickGameData(QuickPlaySessionData quickPlaySessionData)
@@ -174,8 +171,8 @@ public class QuickPlayGameController : MonoBehaviour
         {
             QuickPlayMoveData data = new QuickPlayMoveData
             {
-                roomName = quickPlaySessionInfoObject.roomName,
-                roomId = quickPlaySessionInfoObject.roomId,
+                roomName = Data.quickPlaySessionInfo.roomName,
+                roomId = Data.quickPlaySessionInfo.roomId,
                 currentId = quickPlaySessionDataObject.currentCharId,
                 targetId = SimulateTarget,
                 skill = 1

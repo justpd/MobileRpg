@@ -211,4 +211,14 @@ public class ClientTCP : MonoBehaviour {
         SendData(buffer.ToArray());
         buffer.Dispose();
     }
+
+    public static void Send_Test(string message)
+    {
+        PacketBuffer buffer = new PacketBuffer();
+        buffer.WriteInt((int)ClientPackets.С_Test);
+        buffer.WriteString(message);
+        SendData(buffer.ToArray());
+        buffer.Dispose();
+
+    }
 }
