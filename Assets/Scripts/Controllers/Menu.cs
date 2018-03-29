@@ -31,7 +31,6 @@ public class Menu : MonoBehaviour {
 
     public Image U_progressBar;
 
-    private UserSession userSessionObject;
     private bool loggedIn = false;
 
     public Image icon;
@@ -39,6 +38,7 @@ public class Menu : MonoBehaviour {
     // Start
     private void Start()
     {
+        
         ShowLoginWindow();
     }
     void Update()
@@ -81,7 +81,7 @@ public class Menu : MonoBehaviour {
 
     public void QuickGame()
     {
-        ClientTCP.Send_RequestEnterQuickPlay(userSessionObject);
+        ClientTCP.Send_RequestEnterQuickPlay(Data.userSession);
         WindowSetActive(4);
     }
 
@@ -113,16 +113,16 @@ public class Menu : MonoBehaviour {
 
     public void UpdateUserAccountWindow()
     {
-        U_login.text = userSessionObject.login;
-        U_gold.text = "Gold: " + userSessionObject.gold.ToString();
-        U_energy.text = "Energy: " + userSessionObject.energy.ToString();
-        U_rating.text = "Rating: " + userSessionObject.rating.ToString();
-        U_char_1.text = userSessionObject.mainTeam[0].name + "(" + userSessionObject.mainTeam[0].power + ", lvl:" + userSessionObject.mainTeam[0].lvl + ")";
-        U_char_2.text = userSessionObject.mainTeam[1].name + "(" + userSessionObject.mainTeam[1].power + ", lvl:" + userSessionObject.mainTeam[1].lvl + ")";
-        U_char_3.text = userSessionObject.mainTeam[2].name + "(" + userSessionObject.mainTeam[2].power + ", lvl:" + userSessionObject.mainTeam[2].lvl + ")";
+        U_login.text = Data.userSession.login;
+        U_gold.text = "Gold: " + Data.userSession.gold.ToString();
+        U_energy.text = "Energy: " + Data.userSession.energy.ToString();
+        U_rating.text = "Rating: " + Data.userSession.rating.ToString();
+        U_char_1.text = Data.userSession.mainTeam[0].name + "(" + Data.userSession.mainTeam[0].power + ", lvl:" + Data.userSession.mainTeam[0].lvl + ")";
+        U_char_2.text = Data.userSession.mainTeam[1].name + "(" + Data.userSession.mainTeam[1].power + ", lvl:" + Data.userSession.mainTeam[1].lvl + ")";
+        U_char_3.text = Data.userSession.mainTeam[2].name + "(" + Data.userSession.mainTeam[2].power + ", lvl:" + Data.userSession.mainTeam[2].lvl + ")";
 
-        U_lvl.text = (userSessionObject.exp / 100).ToString();
-        U_progress = (float)((userSessionObject.exp % 100) * 1.7);
+        U_lvl.text = (Data.userSession.exp / 100).ToString();
+        U_progress = (float)((Data.userSession.exp % 100) * 1.7);
         U_progressBar.GetComponent<RectTransform>().sizeDelta = new Vector2(U_progress, 20);
     }
 
@@ -131,7 +131,7 @@ public class Menu : MonoBehaviour {
     {
         if (loggedIn)
         {
-            userSessionObject = null;
+            Data.userSession = null;
             U_login.text = "Login";
             H_login.text = "LOGIN";
             
@@ -152,8 +152,8 @@ public class Menu : MonoBehaviour {
     // Events
     private void OnUserLogin(UserSession userSession)
     {
-        userSessionObject = userSession;
-        PlayerPrefs.SetString("UserSession", JsonConvert.SerializeObject(userSessionObject));
+        Data.userSession = userSession;
+        PlayerPrefs.SetString("UserSession", JsonConvert.SerializeObject(Data.userSession));
         ShowUserAccountWindow();
     }
 
@@ -171,23 +171,23 @@ public class Menu : MonoBehaviour {
     // Update User Session
     private void UpdateLocalUserSession()
     {
-        PlayerPrefs.SetString("UserSession", JsonConvert.SerializeObject(userSessionObject));
+        PlayerPrefs.SetString("UserSession", JsonConvert.SerializeObject(Data.userSession));
     }
    
     public void AddGold()
     {
-        userSessionObject.gold += 20;
-        userSessionObject.exp += 150;
+        Data.userSession.gold += 20;
+        Data.userSession.exp += 150;
         UpdateLocalUserSession();
-        ClientTCP.Send_RequestUserAccountDataUpdate(userSessionObject);
+        ClientTCP.Send_RequestUserAccountDataUpdate(Data.userSession);
         UpdateUserAccountWindow();
     }
 
     public void ApplyFaction(int faction)
     {
-        userSessionObject.faction = faction;
+        Data.userSession.faction = faction;
         UpdateLocalUserSession();
-        ClientTCP.Send_RequestUserAccountDataUpdate(userSessionObject);
+        ClientTCP.Send_RequestUserAccountDataUpdate(Data.userSession);
         UpdateUserAccountWindow();
     }
 
