@@ -45,18 +45,6 @@ public class PainterScript : MonoBehaviour
 			//Debug.Log("huy1");
 		}
 
-		
-
-
-
-
-/*		Vector3[] corners = new Vector3[4];
-		image.rectTransform.GetWorldCorners(corners);
-		Rect newRect = new Rect(corners[0], corners[2]-corners[0]);
-		Debug.Log("newRect pixel coordinates: " + Camera.main.WorldToScreenPoint(corners[0]));
-		ЭТО ПРИДУМАЛ ЕБАНЫЙ ДАУН СУКА Из-зА НЕГО МЫ ПРОЕБАЛИ 20 МИНУТ ПРИМЕРНО НАХУЙ
-		*/
-
 		if (Input.GetMouseButtonDown(0)) 
 		{
 			drawActive = true;
@@ -67,4 +55,9 @@ public class PainterScript : MonoBehaviour
 		} 
 		
 	}
+
+    public void SetCurrentColor(Image image)
+    {
+        curColor = image.color;
+    }
 }

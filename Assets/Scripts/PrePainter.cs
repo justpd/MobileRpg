@@ -20,7 +20,7 @@ public class PrePainter : MonoBehaviour {
 		{
 			for (int x = 0; x < texture.width; x++) 
 			{
-				texture.SetPixel(x, y, Color.black);
+				texture.SetPixel(x, y, Color.white);
 			}
 		}
 		texture.Apply();
@@ -37,8 +37,36 @@ public class PrePainter : MonoBehaviour {
 		GetComponent<Image>().sprite = sprite;
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
+	public void Resize(int scale)
+	{
+		this.scale = scale;
+		texture = new Texture2D(scale, scale) {
+		filterMode = FilterMode.Point
+		};
+
+		for (int y = 0; y < texture.height; y++) 
+		{
+			for (int x = 0; x < texture.width; x++) 
+			{
+				texture.SetPixel(x, y, Color.white);
+			}
+		}
+		texture.Apply();
+		Sprite sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+		GetComponent<Image>().sprite = sprite;
+	}
+	
+	public void ResetCanvas()
+	{
+		for (int y = 0; y < texture.height; y++) 
+		{
+			for (int x = 0; x < texture.width; x++) 
+			{
+				texture.SetPixel(x, y, Color.white);
+			}
+		}
+		texture.Apply();
+		Sprite sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+		GetComponent<Image>().sprite = sprite;
 	}
 }
