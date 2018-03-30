@@ -14,6 +14,7 @@ public class PrePainter : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		scale = Data.userImageScale;
 		//Создаем новую текстуру
 		texture = new Texture2D(scale, scale) {
 		filterMode = FilterMode.Point
@@ -23,7 +24,7 @@ public class PrePainter : MonoBehaviour {
 		{
 			for (int x = 0; x < texture.width; x++) 
 			{
-				texture.SetPixel(x, y, Color.white);
+				texture.SetPixel(x, y, Data.userImageTexture.GetPixel(x, y));
 			}
 		}
 		texture.Apply();
@@ -79,11 +80,16 @@ public class PrePainter : MonoBehaviour {
 	
 	public void ResetCanvas()
 	{
+		scale = Data.userImageScale;
+		texture = new Texture2D(scale, scale) {
+		filterMode = FilterMode.Point
+		};
+
 		for (int y = 0; y < texture.height; y++) 
 		{
 			for (int x = 0; x < texture.width; x++) 
 			{
-				texture.SetPixel(x, y, Color.white);
+				texture.SetPixel(x, y, Data.userImageTexture.GetPixel(x, y));
 			}
 		}
 		texture.Apply();
