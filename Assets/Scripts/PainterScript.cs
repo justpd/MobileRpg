@@ -19,6 +19,8 @@ public class PainterScript : MonoBehaviour
 	float posX;
 	float posY;
 
+	int mode = 1;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -41,7 +43,15 @@ public class PainterScript : MonoBehaviour
 
 		if(x >= 0 && x < canvas.scale && y >= 0 && y < canvas.scale && drawActive)
 		{
-			canvas.Draw(x, y, curColor);
+			switch (mode)
+			{
+				case 0:
+					canvas.Draw(x,y,curColor);
+					break;
+				case 1:
+					canvas.Fill(x,y,curColor);
+					break;
+			}
 			//Debug.Log("huy1");
 		}
 
@@ -60,4 +70,9 @@ public class PainterScript : MonoBehaviour
     {
         curColor = image.color;
     }
+
+	public void SetCurrentMode (int mode)
+	{
+		this.mode = mode;
+	}
 }

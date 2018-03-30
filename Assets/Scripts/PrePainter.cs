@@ -38,7 +38,24 @@ public class PrePainter : MonoBehaviour {
 		texture.Apply();
 		Sprite sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
 		GetComponent<Image>().sprite = sprite;
+	}
 
+	public void Fill(int _x, int _y, Color color) 
+	{
+		Color _temp = texture.GetPixel(_x, _y);
+		for (int y = 0; y < texture.height; y++) 
+		{
+			for (int x = 0; x < texture.width; x++)
+			{
+				if (texture.GetPixel(x, y) == _temp)
+				{
+					texture.SetPixel(x, y, color);
+				}
+			}
+		}
+		texture.Apply();
+		Sprite sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+		GetComponent<Image>().sprite = sprite;
 	}
 	
 	public void Resize(int scale)
