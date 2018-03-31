@@ -112,6 +112,9 @@ public class QuickPlayGameController : MonoBehaviour
             Debug.Log(JsonConvert.SerializeObject(log));
         }
 
+        Debug.Log(quickPlaySessionData.moveInfo.skillCount);
+        Debug.Log(quickPlaySessionData.moveInfo.classID);
+
         CheckTargets();
         UpdateUI();
     }

@@ -46,6 +46,8 @@ public class QuickPlaySessionData
     public string winner;
 
     public List<MoveLog> moveLogs = new List<MoveLog>();
+
+    public MoveInfo moveInfo;
 }
 
 public class MoveLog
@@ -88,9 +90,18 @@ public class UserSession
     public string[] mainTeamNames = new string[3];
 }
 
-public class UserImageData{
+public class UserImageData
+{
     public string b64str;
     public int scale;
     public string login;
 }
 
+
+
+public class MoveInfo
+{
+    public int currentMove;
+    public int skillCount;
+    public string classID;
+}
