@@ -232,4 +232,5 @@ public class ClientTCP : MonoBehaviour {
         SendData(buffer.ToArray());
         buffer.Dispose();
     }
-}
+
+} //###senddata###
