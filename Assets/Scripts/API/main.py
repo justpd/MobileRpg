@@ -1,7 +1,4 @@
-import re
-import os
-import sys
-import fileinput
+import re, os, sys, fileinput, argparse
 
 fd_Network = "../NetWork/"
 file_dataObject = fd_Network + "DataObjects.cs"
@@ -117,10 +114,26 @@ def addNetWorkPacket (clientData):
                 f.write("\tC_{clientData} = {clientPacketIndex}, //###nwpackets###".format(clientData = clientData, clientPacketIndex = clientPacketIndex + 1))
                 f.write("\n} //lb\n")
 
+def cli():
+    parser = argparse.ArgumentParser(description='CLI Api for Mobile RPG project.', epilog='send_data also create new network package and data object')   
+    parser.add_argument('-sdo','--senddataobject', metavar='object name', help='add new send_dataobject in ClientTCP.cs')
+    parser.add_argument('-sds','--senddatastring', metavar='string name', help='add new send_datastring in ClientTCP.cs')
+    parser.add_argument('-npw','--networkpackage', metavar='c_name', help='add new network package in NetWorkPackets.cs')
+    parser.add_argument('-do','--dataobject', metavar='object name', help='add new data object in DataObject.cs')    
+    args = parser.parse_args()  
+    if (args.senddataobject):
+        addSendDataObj(args.senddataobject)
+    elif (args.senddatastring):
+        addSendDataStr(args.senddatastring)
+    elif(args.networkpackage):
+        addNetWorkPacket(args.networkpackage)
+    elif(args.dataobject):
+        newDataObject(args.dataobject)
+    print("done")
+
 
 if __name__ == '__main__':
-    
-    addSendDataObj("EbalTvoiRot3")
+    cli()
     
 
 
