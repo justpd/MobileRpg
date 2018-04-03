@@ -30,6 +30,9 @@ public class QuickPlaySessionInfo
 
     public string[] myCharIds = new string[3];
     public string[] opponentCharIds = new string[3];
+
+    public string enemyImage;
+    public int enemyImageScale;
 }
 
 public class QuickPlaySessionData
