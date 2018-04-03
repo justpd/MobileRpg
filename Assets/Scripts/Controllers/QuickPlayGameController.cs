@@ -46,6 +46,9 @@ public class QuickPlayGameController : MonoBehaviour
     public Text winnerText;
     public GameObject gameOverBar;
 
+    public Image myIcon;
+    public Image opponentIcon;
+
     private void Awake()
     {
         gameOverBar.SetActive(false);
@@ -87,6 +90,20 @@ public class QuickPlayGameController : MonoBehaviour
         myRating.text = Data.userSession.rating.ToString();
         oppName.text = quickPlaySessionInfoObject.opponentName;
         oppRating.text = quickPlaySessionInfoObject.opponentRating.ToString();
+
+        myIcon.sprite = Sprite.Create(Data.userImageTexture, new Rect(0.0f, 0.0f, Data.userImageTexture.width, Data.userImageTexture.height), new Vector2(0.5f, 0.5f), 100.0f);
+        opponentIcon.sprite = DecodeImage(quickPlaySessionInfoObject.enemyImage, quickPlaySessionInfoObject.enemyImageScale);
+    }
+
+    private Sprite DecodeImage(string b64str, int scale)
+    {
+        byte[] b64_bytes = System.Convert.FromBase64String(b64str);
+        Texture2D texture = new Texture2D(scale, scale)
+        {
+            filterMode = FilterMode.Point,
+        };
+        texture.LoadImage(b64_bytes);
+        return Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
     }
 
     private void OnQuickGameData(QuickPlaySessionData quickPlaySessionData)
