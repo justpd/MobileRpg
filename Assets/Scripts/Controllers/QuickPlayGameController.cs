@@ -46,6 +46,8 @@ public class QuickPlayGameController : MonoBehaviour
     public Text winnerText;
     public GameObject gameOverBar;
 
+    public GameObject SkillBar;
+
     public Image myIcon;
     public Image opponentIcon;
 
@@ -132,6 +134,8 @@ public class QuickPlayGameController : MonoBehaviour
         Debug.Log(quickPlaySessionData.moveInfo.skillCount);
         Debug.Log(quickPlaySessionData.moveInfo.classID);
 
+        SkillBar.transform.position = new Vector3(-10 + (3 - quickPlaySessionData.moveInfo.skillCount) * 110, 15,0);
+
         CheckTargets();
         UpdateUI();
     }
@@ -202,7 +206,7 @@ public class QuickPlayGameController : MonoBehaviour
         }
     }
 
-    public void SimulateMove()
+    public void SimulateMove(int skill)
     {
         if (myMove && SimulateTarget != null)
         {
@@ -212,7 +216,7 @@ public class QuickPlayGameController : MonoBehaviour
                 roomId = quickPlaySessionInfoObject.roomId,
                 currentId = quickPlaySessionDataObject.currentCharId,
                 targetId = SimulateTarget,
-                skill = 1
+                skill = skill
             };
             ClientTCP.Send_QuickPlayMoveData(data);
 
