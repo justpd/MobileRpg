@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
@@ -15,15 +15,16 @@ public class ClientHandleNetworkData : MonoBehaviour {
     private static bool EventUserSessionUpdate = false;
     private static bool EventUserLogin = false;
     private static bool EventUserRegisttration = false;
-    private static bool EventQuickPlay = false;
     private static bool EventQuickPlayInfo = false;
     private static bool EventQuickPlayData = false;
     private static bool EventImageUpdate = false;
+    //###addboolevent###
 
     private static UserSession activeUserSession;
     private static QuickPlaySessionInfo activeQuickPlaySessionInfo;
     private static QuickPlaySessionData activeQuickPlaySessionData;
     private static UserImageData userImageData;
+    //###addobjectevent###
 
     // Use this for initialization
     void Awake () {
@@ -68,6 +69,7 @@ public class ClientHandleNetworkData : MonoBehaviour {
             ClientTCP.ClientController.SendMessage("OnImageUpdate", userImageData);
             EventImageUpdate = false;
         }
+        //###addeventupdate###
     }
 
     public static void InitializeNetworkPackages () {
@@ -107,6 +109,7 @@ public class ClientHandleNetworkData : MonoBehaviour {
             (int) ServerPackets.S_UpdateUserImage,
             Handle_ImageUpdate
             },
+            //###inithandler###
         };
 
     }
@@ -236,5 +239,6 @@ public class ClientHandleNetworkData : MonoBehaviour {
         activeQuickPlaySessionData = JsonConvert.DeserializeObject<QuickPlaySessionData>(msg);
         EventQuickPlayData = true;
     }
+    //###addhandler###
 
 }
