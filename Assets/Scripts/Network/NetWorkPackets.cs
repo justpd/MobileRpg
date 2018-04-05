@@ -13,7 +13,7 @@ public enum ServerPackets
     S_SendQuickPlaySessionInfo = 606006,
     S_SendQuickPlaySessionData = 606007,
     S_UpdateUserSessionData = 606008,
-    S_UpdateUserImage = 606009, //###snwpackets###
+    S_UpdateUserImage = 606009,//###snwpackets###
 }
 
 // Client -> Server
@@ -26,5 +26,5 @@ public enum ClientPackets
     C_RequestUserAccountDataUpdate = 505004,
     C_RequestEnterQuickPlay = 505005,
     C_QuickPlayMoveData = 505006,
-    C_RequestUpdateImage = 505007, //###nwpackets###
-} //lb
+    C_RequestUpdateImage = 505007,//###cnwpackets###
+} 

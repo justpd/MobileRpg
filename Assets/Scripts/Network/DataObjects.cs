@@ -100,8 +100,6 @@ public class UserImageData
     public string login;
 }
 
-
-
 public class MoveInfo
 {
     public int currentMove;

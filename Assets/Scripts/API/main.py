@@ -21,7 +21,6 @@ def addDataObject (className, _vars):
 
         for var in _vars:
             f.write("\tpublic {_var}\n".format(_var = var))
-
         f.write("}")
 
 def newDataObject():
@@ -44,79 +43,44 @@ def newDataObject(className):
 
 
 def addSendDataStr(sendDataName):
-
-    re_send = r"\}\s\/{2}(?:^|\#{3})senddata(?:$|\#{3})"
-    addNetWorkPacket(sendDataName)
     
-    with open(file_clienTCP) as f:
-        lines = f.readlines()
+    addClientNetWorkPacket(sendDataName)
 
-    with open(file_clienTCP, 'a') as f:
-        for line in lines:
-            if(re.search(re_send, line)):
-                f.write("\n\n\tpublic static void Send_{sendDataName}(string str)\n{\n.".format(sendDataName = sendDataName))
-                f.write("\t\tPacketBuffer buffer = new PacketBuffer();\n")
-                f.write("\t\tbuffer.WriteInt((int)ClientPackets.C_{packetIndex});\n".format(packetIndex = sendDataName))
-                f.write("\t\tbuffer.WriteString(str);\n")
-                f.write("\t\tSendData(buffer.ToArray());\n")
-                f.write("\t\tbuffer.Dispose();\n\t}\n") 
-
+    string = "public static void Send_{sendDataName}(string str)\n{\n.".format(sendDataName = sendDataName)+"\t\tPacketBuffer buffer = new PacketBuffer();\n"+"\t\tbuffer.WriteInt((int)ClientPackets.C_{packetIndex});\n".format(packetIndex = sendDataName)+"\t\tbuffer.WriteString(str);\n\t\tSendData(buffer.ToArray());\n\t\tbuffer.Dispose();\n\t}\n\t//###senddata###"
+    
     for line in fileinput.input(file_clienTCP, inplace = 1):
-        sys.stdout.write(line.replace('} //###senddata###', ''))
-
-    with open(file_clienTCP, 'a') as f:
-        f.write("\n} //###senddata###")
+        sys.stdout.write(line.replace('//###senddata###', string))
 
 
 def addSendDataObj(sendDataType):
-    re_send = r"\}\s\/{2}(?:^|\#{3})senddata(?:$|\#{3})"
-    newDataObject(sendDataType)
-    addNetWorkPacket(sendDataType)
     
-    with open(file_clienTCP) as f:
-        lines = f.readlines()
-
-    with open(file_clienTCP, 'a') as f:
-        for line in lines:
-            if(re.search(re_send, line)):
-                f.write("\n\tpublic static void Send_{sendDataType}({sendDataType} {sendDataName})\n".format(sendDataType = sendDataType, sendDataName = uncapitalize(sendDataType)))
-                f.write("\t{\n\t\tPacketBuffer buffer = new PacketBuffer();\n")
-                f.write("\t\tbuffer.WriteInt((int)ClientPackets.C_{packetIndex});\n".format(packetIndex = sendDataType))
-                f.write("\t\tstring json = JsonConvert.SerializeObject({sendDataName});\n".format(sendDataName = uncapitalize(sendDataType)))
-                f.write("\t\tbuffer.WriteString(json);\n")
-                f.write("\t\tSendData(buffer.ToArray());\n")
-                f.write("\t\tbuffer.Dispose();\n\t}") 
+    newDataObject(sendDataType)
+    addClientNetWorkPacket(sendDataType)
+    
+    string = "public static void Send_{}({} {})\n".format(sendDataType,sendDataType,uncapitalize(sendDataType))+"\t{\n\t\tPacketBuffer buffer = new PacketBuffer();\n"+"\t\tbuffer.WriteInt((int)ClientPackets.C_{});\n".format(sendDataType)+"\t\tstring json = JsonConvert.SerializeObject({});\n".format(uncapitalize(sendDataType))+"\t\tbuffer.WriteString(json);\n\t\tSendData(buffer.ToArray());\n\t\tbuffer.Dispose();\n\t}\n\t//###senddata###"
         
     for line in fileinput.input(file_clienTCP, inplace = 1):
-        sys.stdout.write(line.replace('} //###senddata###', ''))
+        sys.stdout.write(line.replace('//###senddata###', string))
 
-    with open(file_clienTCP, 'a') as f:
-        f.write("\n} //###senddata###")
 
-def addNetWorkPacket (clientData):
-    # re_lb = r"\/{2}(?:^|\#{3})lb(?:$|\#{3})" #} //###lb###
-    re_send = r"(\d{6})(\W\s\/{2}(?:^|\#{3})nwpackets(?:$|\#{3}))"
+def addClientNetWorkPacket (clientData):
+    re_send = r"(\d{6})(\W\/{2}(?:^|\#{3})cnwpackets(?:$|\#{3}))"
 
     with open(file_nwPackets) as f:
         lines = f.readlines()
 
-    for line in fileinput.input(file_nwPackets, inplace = 1):
-        sys.stdout.write(line.replace('} //lb\n', ''))
-
-    f = open(file_nwPackets, 'a')
+    f = open(file_nwPackets, 'r')
     for line in lines:
         matches = re.findall(re_send, line)
         if(matches):
             f.close()
             clientPacketIndex = int(matches[0][0])
             for line in fileinput.input(file_nwPackets, inplace = 1):
-                sys.stdout.write(line.replace(' //###nwpackets###', ''))
-            with open(file_nwPackets, 'a') as f:
-                f.write("\tC_{clientData} = {clientPacketIndex}, //###nwpackets###".format(clientData = clientData, clientPacketIndex = clientPacketIndex + 1))
-                f.write("\n} //lb\n")
+                sys.stdout.write(line.replace('//###cnwpackets###', '\n\tS_Send{} = {},//###cnwpackets###'.format(clientData, clientPacketIndex + 1)))
+                
 
 def addServerNetWorkPacket (serverData):
-    re_send = r"(\d{6})(\W\s\/{2}(?:^|\#{3})snwpackets(?:$|\#{3}))"
+    re_send = r"(\d{6})(\W\/{2}(?:^|\#{3})snwpackets(?:$|\#{3}))"
 
     with open(file_nwPackets) as f:
         lines = f.readlines()
@@ -128,7 +92,7 @@ def addServerNetWorkPacket (serverData):
             f.close()
             serverPacketIndex = int(matches[0][0])
             for line in fileinput.input(file_nwPackets, inplace = 1):
-                sys.stdout.write(line.replace(' //###snwpackets###', '\n\tS_Send{serverData} = {serverPacketIndex}, //###snwpackets###'.format(serverData = serverData, serverPacketIndex = serverPacketIndex + 1)))
+                sys.stdout.write(line.replace('//###snwpackets###', '\n\tS_Send{} = {},//###snwpackets###'.format(serverData, serverPacketIndex + 1)))
   
 
 
@@ -136,7 +100,7 @@ def addServerNetWorkPacket (serverData):
 def addHandlerNetworkDataString(HandlerDataType, functionName):
     addServerNetWorkPacket(HandlerDataType)
     newDataObject(HandlerDataType)
-    addNetWorkPacket(HandlerDataType)
+    addClientNetWorkPacket(HandlerDataType)
     for line in fileinput.input(file_cliHndlNwData, inplace = 1):
         sys.stdout.write(line.replace("//###addboolevent###", "private static bool Event{HandlerDataType} = false;\n\t//###addboolevent###".format(HandlerDataType = HandlerDataType)))
     for line in fileinput.input(file_cliHndlNwData, inplace = 1):
@@ -150,7 +114,7 @@ def addHandlerNetworkDataString(HandlerDataType, functionName):
 def addHandlerNetworkDataObject(HandlerDataType, functionName):
     addServerNetWorkPacket(HandlerDataType)
     newDataObject(HandlerDataType)
-    addNetWorkPacket(HandlerDataType)
+    addClientNetWorkPacket(HandlerDataType)
     for line in fileinput.input(file_cliHndlNwData, inplace = 1):
         sys.stdout.write(line.replace("//###addboolevent###", "private static bool Event{HandlerDataType} = false;\n\t//###addboolevent###".format(HandlerDataType = HandlerDataType)))        
     for line in fileinput.input(file_cliHndlNwData, inplace = 1):  
@@ -169,7 +133,8 @@ def cli():
     parser = argparse.ArgumentParser(description='CLI Api for Mobile RPG project.', epilog='send_data also create new network package and data object')   
     parser.add_argument('-sdo','--senddataobject', metavar='object name', help='add new send_dataobject in ClientTCP.cs')
     parser.add_argument('-sds','--senddatastring', metavar='string name', help='add new send_datastring in ClientTCP.cs')
-    parser.add_argument('-npw','--networkpackage', metavar='c_name', help='add new network package in NetWorkPackets.cs')
+    parser.add_argument('-cnpw','--clientnetworkpackage', metavar='c_name', help='add new client network package in NetWorkPackets.cs')
+    parser.add_argument('-snpw','--servernetworkpackage', metavar='c_name', help='add new server network package in NetWorkPackets.cs')
     parser.add_argument('-do','--dataobject', metavar='object name', help='add new data object in DataObject.cs')    
     parser.add_argument('-hnds','--handlernetworkdatastring', nargs=2, metavar='string name', help='add new handler network data in ClientHandleNetworkData.cs')    
     parser.add_argument('-hndo','--handlernetworkdataobj', nargs=2, metavar='string name', help='add new handler network data in ClientHandleNetworkData.cs')    
@@ -178,8 +143,10 @@ def cli():
         addSendDataObj(args.senddataobject)
     elif (args.senddatastring):
         addSendDataStr(args.senddatastring)
-    elif(args.networkpackage):
-        addNetWorkPacket(args.networkpackage)
+    elif(args.clientnetworkpackage):
+        addNetWorkPacket(args.clientnetworkpackage)
+    elif(args.servernetworkpackage):
+        addNetWorkPacket(args.servernetworkpackage)
     elif(args.dataobject):
         newDataObject(args.dataobject)
     elif(args.handlernetworkdatastring):
