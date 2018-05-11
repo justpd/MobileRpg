@@ -14,68 +14,63 @@ public class UserRegistrationData
     public string login;
     public string password;
     public string email;
-    public string faction = "Faith";
 }
 
 public class QuickPlaySessionInfo
 {
     public string roomName;
     public int roomId;
-    public bool firstPlayer;
+
     public string opponentName;
     public int opponentRating;
 
-    public string[] myCharNames = new string[3];
-    public string[] opponentCharNames = new string[3];
-
-    public string[] myCharIds = new string[3];
-    public string[] opponentCharIds = new string[3];
-
     public string enemyImage;
     public int enemyImageScale;
+
+    public string myCard;
+    public string oppCard;
+    public bool button;
 }
 
 public class QuickPlaySessionData
 {
-    public string roomName;
     public int roomId;
 
-    public List<float> HealthData = new List<float>();
-    public List<float> TurnMeterData = new List<float>();
+    public bool firstHand;
 
-    public string currentCharId;
+    public string hand;
 
-    public bool gameOver;
-    public string winner;
+    public Deck oppDeck;
+    public string oppMove;
 
-    public List<MoveLog> moveLogs = new List<MoveLog>();
+    public bool myBrokenHand;
+    public bool opponentBrokenHand;
 
-    public MoveInfo moveInfo;
+    //public List<MoveLog> moveLogs = new List<MoveLog>();
 }
 
 public class MoveLog
 {
-    public string current;
-    public string target;
-
-    public bool isCritical = false;
-    public bool isEvaded = false;
-
-    public string type;
-
-    public int damage = 0;
-    public int heal = 0;
+    public string name;
+    public Card[] hand = new Card[3];
+    public Card lost;
+    public Deck deck;
 }
 
-public class QuickPlayMoveData
+public class Card
 {
-    public string roomName;
-    public int roomId;
+    public string value;
+}
 
-    public string currentId;
-    public string targetId;
+public class Deck
+{
+    public Card[] low = new Card[3];
+    public Card[] mid = new Card[5];
+    public Card[] top = new Card[5];
 
-    public int skill;
+    public string lowHand;
+    public string midHand;
+    public string topHand;
 }
 
 public class UserSession
@@ -86,11 +81,7 @@ public class UserSession
     public int exp;
     public int gold;
     public int energy;
-    public int rating;
-    public int faction;
-
-    public UserChar[] mainTeam = new UserChar[3];
-    public string[] mainTeamNames = new string[3];
+    public int rating;    
 }
 
 public class UserImageData
@@ -98,11 +89,4 @@ public class UserImageData
     public string b64str;
     public int scale;
     public string login;
-}
-
-public class MoveInfo
-{
-    public int currentMove;
-    public int skillCount;
-    public string classID;
 }

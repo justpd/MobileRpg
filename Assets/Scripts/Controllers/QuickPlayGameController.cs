@@ -56,7 +56,6 @@ public class QuickPlayGameController : MonoBehaviour
         gameOverBar.SetActive(false);
         quickPlaySessionInfoObject = JsonConvert.DeserializeObject<QuickPlaySessionInfo>(PlayerPrefs.GetString("QuickPlaySessionInfo", ""));
 
-        firstPlayer = quickPlaySessionInfoObject.firstPlayer;
 
         Debug.Log(JsonConvert.SerializeObject(quickPlaySessionInfoObject));
 
@@ -64,29 +63,6 @@ public class QuickPlayGameController : MonoBehaviour
         currentStatus = Resources.Load<Sprite>("Platforms/blue_platform");
         usualStatus = Resources.Load<Sprite>("Platforms/gray_platform");
 
-        players[0].id = quickPlaySessionInfoObject.myCharIds[0];
-        players[1].id = quickPlaySessionInfoObject.myCharIds[1];
-        players[2].id = quickPlaySessionInfoObject.myCharIds[2];
-
-        myChars[0] = quickPlaySessionInfoObject.myCharIds[0];
-        myChars[1] = quickPlaySessionInfoObject.myCharIds[1];
-        myChars[2] = quickPlaySessionInfoObject.myCharIds[2];
-
-        players[3].id = quickPlaySessionInfoObject.opponentCharIds[0];
-        players[4].id = quickPlaySessionInfoObject.opponentCharIds[1];
-        players[5].id = quickPlaySessionInfoObject.opponentCharIds[2];
-
-        opponentChars[0] = quickPlaySessionInfoObject.opponentCharIds[0];
-        opponentChars[1] = quickPlaySessionInfoObject.opponentCharIds[1];
-        opponentChars[2] = quickPlaySessionInfoObject.opponentCharIds[2];
-
-        players[0].name = quickPlaySessionInfoObject.myCharNames[0];
-        players[1].name = quickPlaySessionInfoObject.myCharNames[1];
-        players[2].name = quickPlaySessionInfoObject.myCharNames[2];
-
-        players[3].name = quickPlaySessionInfoObject.opponentCharNames[0];
-        players[4].name = quickPlaySessionInfoObject.opponentCharNames[1];
-        players[5].name = quickPlaySessionInfoObject.opponentCharNames[2];
 
         myName.text = Data.userSession.login;
         myRating.text = Data.userSession.rating.ToString();
@@ -111,30 +87,6 @@ public class QuickPlayGameController : MonoBehaviour
     private void OnQuickGameData(QuickPlaySessionData quickPlaySessionData)
     {
         quickPlaySessionDataObject = quickPlaySessionData;
-        myMove = myChars.Contains(quickPlaySessionDataObject.currentCharId);
-        if (myMove)
-        {
-            skillBar.SetActive(true);
-        }
-        else
-        {
-            skillBar.SetActive(false);
-        }
-        if (quickPlaySessionData.gameOver)
-        {
-            gameOverBar.SetActive(true);
-            winnerText.text = quickPlaySessionData.winner + " won!";
-        }
-
-        foreach (MoveLog log in quickPlaySessionData.moveLogs)
-        {
-            Debug.Log(JsonConvert.SerializeObject(log));
-        }
-
-        Debug.Log(quickPlaySessionData.moveInfo.skillCount);
-        Debug.Log(quickPlaySessionData.moveInfo.classID);
-
-        SkillBar.transform.position = new Vector3(-10 + (3 - quickPlaySessionData.moveInfo.skillCount) * 110, 15,0);
 
         CheckTargets();
         UpdateUI();
@@ -164,36 +116,7 @@ public class QuickPlayGameController : MonoBehaviour
     {
         for (int i = 0; i < 6; i++)
         {
-            if (firstPlayer)
-            {
-                players[i].health = quickPlaySessionDataObject.HealthData[i];
-                players[i].turnmeter = quickPlaySessionDataObject.TurnMeterData[i];
-            }
-            else
-            {
-                players[i].health = quickPlaySessionDataObject.HealthData[secondPlayerIndexes[i]];
-                players[i].turnmeter = quickPlaySessionDataObject.TurnMeterData[secondPlayerIndexes[i]];
-            }
-            players[i].UpdateBars();
 
-            Debug.Log(players[i].id + " | " + quickPlaySessionDataObject.currentCharId);
-            if (players[i].id == quickPlaySessionDataObject.currentCharId)
-            {
-                players[i].Status.sprite = currentStatus;
-            }
-            else if (players[i].id == SimulateTarget)
-            {
-                players[i].Status.sprite = targetStatus;
-            }
-            else
-            {
-                players[i].Status.sprite = usualStatus;
-            }
-
-            if (players[i].health == 0)
-            {
-                players[i].Icon.color = new Color(players[i].Icon.color.r, players[i].Icon.color.g, players[i].Icon.color.b, 0.5F);
-            }
         }
     }
 
@@ -208,24 +131,7 @@ public class QuickPlayGameController : MonoBehaviour
 
     public void SimulateMove(int skill)
     {
-        if (myMove && SimulateTarget != null)
-        {
-            QuickPlayMoveData data = new QuickPlayMoveData
-            {
-                roomName = quickPlaySessionInfoObject.roomName,
-                roomId = quickPlaySessionInfoObject.roomId,
-                currentId = quickPlaySessionDataObject.currentCharId,
-                targetId = SimulateTarget,
-                skill = skill
-            };
-            ClientTCP.Send_QuickPlayMoveData(data);
 
-            lastTarget = data.targetId;
-            SimulateTarget = null;
-            myMove = false;
-            skillBar.SetActive(false);
-            CheckTargets();
-        }
     }
 
     public void ExitSession()

@@ -136,8 +136,6 @@ public class ClientHandleNetworkData : MonoBehaviour {
 
         //add your code you want to execute here;
         Debug.Log ("Sever: " + msg);
-
-        ClientTCP.Send_ConfirmConnection ();
     }
 
     private static void Handle_ImageUpdate (byte[] data) {
