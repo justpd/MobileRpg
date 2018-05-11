@@ -146,14 +146,6 @@ public class ClientTCP : MonoBehaviour {
 
     // Main Senders
 
-    public static void Send_ConfirmConnection () {
-        PacketBuffer buffer = new PacketBuffer ();
-        buffer.WriteInt ((int) ClientPackets.C_ConfirmConnection);
-        buffer.WriteString ("Connection confirmed.");
-        SendData (buffer.ToArray ());
-        buffer.Dispose ();
-    }
-
     public static void Send_Base64Image (string b64str, int scale, string login) {
         PacketBuffer buffer = new PacketBuffer ();
         buffer.WriteInt ((int) ClientPackets.C_RequestUpdateImage);
@@ -185,7 +177,8 @@ public class ClientTCP : MonoBehaviour {
     {
         PacketBuffer buffer = new PacketBuffer();
         buffer.WriteInt((int)ClientPackets.C_RequestUserLogout);
-        buffer.WriteString(Data.userSession.login);
+        string json = JsonConvert.SerializeObject(new { login = Data.userSession.login });
+        buffer.WriteString(json);
         SendData(buffer.ToArray());
         buffer.Dispose();
     }
@@ -218,7 +211,8 @@ public class ClientTCP : MonoBehaviour {
     {
         PacketBuffer buffer = new PacketBuffer();
         buffer.WriteInt((int)ClientPackets.C_RequestEnterQuickPlay);
-        buffer.WriteString(userSession.login);
+        string json = JsonConvert.SerializeObject(new { login = userSession.login });
+        buffer.WriteString(json);
         SendData(buffer.ToArray());
         buffer.Dispose();
     }
