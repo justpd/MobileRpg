@@ -18,7 +18,6 @@ public class UserRegistrationData
 
 public class QuickPlaySessionInfo
 {
-    public string roomName;
     public int roomId;
 
     public string opponentName;
@@ -27,9 +26,14 @@ public class QuickPlaySessionInfo
     public string enemyImage;
     public int enemyImageScale;
 
-    public string myCard;
-    public string oppCard;
-    public bool button;
+    public string myDealerCard;
+    public string oppDealerCard;
+
+    public bool dealer;
+
+    public string name;
+    public int point;
+    public int chips;
 }
 
 public class QuickPlaySessionData
