@@ -19,7 +19,7 @@ public class PainterScript : MonoBehaviour
 	float posX;
 	float posY;
 
-	int mode = 1;
+	int mode = 0;
 
 	// Use this for initialization
 	void Start () 

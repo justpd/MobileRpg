@@ -140,7 +140,6 @@ public class ClientTCP : MonoBehaviour {
         sizeinfo[2] = (byte)(data.Length >> 16);
         sizeinfo[3] = (byte)(data.Length >> 24);
 
-        _clientSock.Send(sizeinfo);
         _clientSock.Send (data);
 
     }
@@ -209,7 +208,8 @@ public class ClientTCP : MonoBehaviour {
         PacketBuffer buffer = new PacketBuffer();
         buffer.WriteInt((int)ClientPackets.C_RequestUserAccountDataUpdate);
         Debug.Log("Updating userInfo");
-        buffer.WriteString(login);
+        string json = JsonConvert.SerializeObject(new { login = login });
+        buffer.WriteString(json);
         SendData(buffer.ToArray());
         buffer.Dispose();
     }
@@ -223,7 +223,7 @@ public class ClientTCP : MonoBehaviour {
         buffer.Dispose();
     }
 
-    public static void Send_QuickPlayMoveData(QuickPlayMoveData quickPlaySessionData)
+    public static void Send_QuickPlayMoveData(QuickPlaySessionData quickPlaySessionData)
     {
         PacketBuffer buffer = new PacketBuffer();
         buffer.WriteInt((int)ClientPackets.C_QuickPlayMoveData);

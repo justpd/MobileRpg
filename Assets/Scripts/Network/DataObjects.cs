@@ -75,11 +75,10 @@ public class Deck
 
 public class UserSession
 {
-    public string login;
     public string id;
-
-    public int exp;
+    public string login;
     public int gold;
+    public int experience;
     public int energy;
     public int rating;    
 }

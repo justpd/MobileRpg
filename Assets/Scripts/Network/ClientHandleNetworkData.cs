@@ -158,7 +158,8 @@ public class ClientHandleNetworkData : MonoBehaviour {
 
         //add your code you want to execute here;
         Debug.Log (msg);
-        activeUserSession = JsonConvert.DeserializeObject<UserSession> (msg);
+        activeUserSession = JsonConvert.DeserializeObject<UserSession>(msg);
+        Debug.Log(msg);
         EventUserLogin = true;
     }
 

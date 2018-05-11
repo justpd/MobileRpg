@@ -107,8 +107,8 @@ public class Menu : MonoBehaviour {
         //U_char_2.text = Data.userSession.mainTeam[1].name + "(" + Data.userSession.mainTeam[1].power + ", lvl:" + Data.userSession.mainTeam[1].lvl + ")";
         //U_char_3.text = Data.userSession.mainTeam[2].name + "(" + Data.userSession.mainTeam[2].power + ", lvl:" + Data.userSession.mainTeam[2].lvl + ")";
 
-        U_lvl.text = (Data.userSession.exp / 100).ToString();
-        U_progress = (float)((Data.userSession.exp % 100) * 1.7);
+        U_lvl.text = (Data.userSession.experience / 100).ToString();
+        U_progress = (float)((Data.userSession.experience % 100) * 1.7);
         U_progressBar.GetComponent<RectTransform>().sizeDelta = new Vector2(U_progress, 20);
     }
 
