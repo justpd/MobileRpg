@@ -44,12 +44,6 @@ public class QuickPlaySessionData
 
     public string hand;
 
-    public Deck oppDeck;
-    public string oppMove;
-
-    public bool myBrokenHand;
-    public bool opponentBrokenHand;
-
     //public List<MoveLog> moveLogs = new List<MoveLog>();
 }
 

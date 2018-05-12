@@ -92,6 +92,8 @@ public class QuickPlayGameController : MonoBehaviour
 
     private void ResetCards()
     {
+        Confirm.interactable = false;
+
         foreach (Image card in myTop)
         {
             card.sprite = Blank;
@@ -137,6 +139,7 @@ public class QuickPlayGameController : MonoBehaviour
         oppDealerCard.sprite = None;
     }
 
+
     private Sprite DecodeImage(string b64str, int scale)
     {
         byte[] b64_bytes = System.Convert.FromBase64String(b64str);
@@ -151,6 +154,32 @@ public class QuickPlayGameController : MonoBehaviour
     private void OnQuickGameData(QuickPlaySessionData quickPlaySessionData)
     {
         quickPlaySessionDataObject = quickPlaySessionData;
+
+        Debug.Log(JsonConvert.SerializeObject(quickPlaySessionInfoObject));
+
+        if (quickPlaySessionData.firstHand)
+        {
+            if (dealer)
+            {
+                // Opponent's Turn
+                int i = 0;
+                foreach (string card in quickPlaySessionData.hand.Split(','))
+                {
+                    DrawCard(card, oppHand[i]);
+                    i++;
+                }
+            }
+            else
+            {
+                // My Turn
+                int i = 0;
+                foreach (string card in quickPlaySessionData.hand.Split(','))
+                {
+                    DrawCard(card, myHand[i]);
+                    i++;
+                }
+            }
+        }
 
     }
 
