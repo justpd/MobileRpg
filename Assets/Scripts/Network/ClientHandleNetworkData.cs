@@ -236,6 +236,9 @@ public class ClientHandleNetworkData : MonoBehaviour {
         //add your code you want to execute here;
         Debug.Log(msg);
         activeQuickPlaySessionData = JsonConvert.DeserializeObject<QuickPlaySessionData>(msg);
+        Debug.Log("QuickPlayData");
+        Debug.Log(activeQuickPlaySessionData.firstHand);
+        Debug.Log(activeQuickPlaySessionData.roomId);
         EventQuickPlayData = true;
     }
     //###addhandler###

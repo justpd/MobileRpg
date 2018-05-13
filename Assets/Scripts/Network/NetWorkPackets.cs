@@ -25,6 +25,6 @@ public enum ClientPackets
     C_RequestUserRegistration = 505003,
     C_RequestUserAccountDataUpdate = 505004,
     C_RequestEnterQuickPlay = 505005,
-    C_QuickPlayMoveData = 505006,
+    C_SendQuickPlayMoveData = 505006,
     C_RequestUpdateImage = 505007,//###cnwpackets###
 } 

@@ -42,9 +42,28 @@ public class QuickPlaySessionData
 
     public bool firstHand;
 
+    public bool myTurn;
+
     public string hand;
 
+    public string opponentHand;
+
+    public string position;
+
+    public string[] myHandStr;
+    public int[] myHandRanks;
+
+    public string[] oppHandStr;
+    public int[] oppHandRanks;
+
     //public List<MoveLog> moveLogs = new List<MoveLog>();
+}
+
+public class QuickPlayMoveData
+{
+    public int roomId;
+
+    public string position;
 }
 
 public class MoveLog

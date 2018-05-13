@@ -217,11 +217,11 @@ public class ClientTCP : MonoBehaviour {
         buffer.Dispose();
     }
 
-    public static void Send_QuickPlayMoveData(QuickPlaySessionData quickPlaySessionData)
+    public static void Send_QuickPlayMoveData(QuickPlayMoveData quickPlayMoveData)
     {
         PacketBuffer buffer = new PacketBuffer();
-        buffer.WriteInt((int)ClientPackets.C_QuickPlayMoveData);
-        string json = JsonConvert.SerializeObject(quickPlaySessionData);
+        buffer.WriteInt((int)ClientPackets.C_SendQuickPlayMoveData);
+        string json = JsonConvert.SerializeObject(quickPlayMoveData);
         buffer.WriteString(json);
         SendData(buffer.ToArray());
         buffer.Dispose();
