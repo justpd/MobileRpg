@@ -16,6 +16,18 @@ public class UserRegistrationData
     public string email;
 }
 
+public class QuickPlaySessionNewRound
+{
+    public int roomId;
+    public bool dealer;
+    public int myScore;
+    public int point;
+    public string winner;
+    public bool myBroken;
+    public bool oppBroken;
+
+}
+
 public class QuickPlaySessionInfo
 {
     public int roomId;
@@ -97,7 +109,7 @@ public class UserSession
     public int gold;
     public int experience;
     public int energy;
-    public int rating;    
+    public int rating;   
 }
 
 public class UserImageData

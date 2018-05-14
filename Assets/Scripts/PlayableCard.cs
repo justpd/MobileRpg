@@ -21,13 +21,18 @@ public class PlayableCard : MonoBehaviour
 
     public void OnMouseDown()
     {
-        if (position == "")
+        if (position == "" && value != "")
         {
             if (!Data.selectedCard)
             {
                 Data.selectedCard = this;
                 image.color = new Color32(255, 255, 255, 100);
                 selected = true;
+            }
+            else if (Data.selectedCard == this)
+            {
+                Data.selectedCard.image.color = new Color32(255, 255, 255, 255);
+                Data.selectedCard.selected = false;
             }
             else if (Data.selectedCard)
             {

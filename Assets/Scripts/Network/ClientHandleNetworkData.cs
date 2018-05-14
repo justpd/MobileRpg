@@ -18,11 +18,13 @@ public class ClientHandleNetworkData : MonoBehaviour {
     private static bool EventQuickPlayInfo = false;
     private static bool EventQuickPlayData = false;
     private static bool EventImageUpdate = false;
+    private static bool EventQuickPlaySessionNewRound = false;
     //###addboolevent###
 
     private static UserSession activeUserSession;
     private static QuickPlaySessionInfo activeQuickPlaySessionInfo;
     private static QuickPlaySessionData activeQuickPlaySessionData;
+    private static QuickPlaySessionNewRound activeQuickPlaySessionNewRound;
     private static UserImageData userImageData;
     //###addobjectevent###
 
@@ -62,6 +64,12 @@ public class ClientHandleNetworkData : MonoBehaviour {
             ClientTCP.UpdateController();
             ClientTCP.ClientController.SendMessage("OnQuickGameData", activeQuickPlaySessionData);
             EventQuickPlayData = false;
+        }
+        else if (EventQuickPlaySessionNewRound)
+        {
+            ClientTCP.UpdateController();
+            ClientTCP.ClientController.SendMessage("OnQuickGameNewRound", activeQuickPlaySessionNewRound);
+            EventQuickPlaySessionNewRound = false;
         }
         else if (EventImageUpdate)
         {
@@ -108,6 +116,10 @@ public class ClientHandleNetworkData : MonoBehaviour {
             {
             (int) ServerPackets.S_UpdateUserImage,
             Handle_ImageUpdate
+            },
+            {
+            (int) ServerPackets.S_SendQuickPlayNewRound,
+            Handle_QuickPlayNewRound
             },
             //###inithandler###
         };
@@ -223,6 +235,20 @@ public class ClientHandleNetworkData : MonoBehaviour {
         Debug.Log(msg);
         activeQuickPlaySessionInfo = JsonConvert.DeserializeObject<QuickPlaySessionInfo>(msg);
         EventQuickPlayInfo = true;
+    }
+
+    public static void Handle_QuickPlayNewRound(byte[] data)
+    {
+        PacketBuffer buffer = new PacketBuffer();
+        buffer.WriteBytes(data);
+        int packetNum = buffer.ReadInteger();
+        string msg = buffer.ReadString();
+        buffer.Dispose();
+
+        //add your code you want to execute here;
+        Debug.Log(msg);
+        activeQuickPlaySessionNewRound = JsonConvert.DeserializeObject<QuickPlaySessionNewRound>(msg);
+        EventQuickPlaySessionNewRound = true;
     }
 
     public static void Handle_QuickPlaySessionData(byte[] data)

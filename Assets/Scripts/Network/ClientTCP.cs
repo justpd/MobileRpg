@@ -217,6 +217,16 @@ public class ClientTCP : MonoBehaviour {
         buffer.Dispose();
     }
 
+    public static void Send_RequestQuickPlayNewRound(int roomId)
+    {
+        PacketBuffer buffer = new PacketBuffer();
+        buffer.WriteInt((int)ClientPackets.C_RequestQuickPlayNewRound);
+        string json = JsonConvert.SerializeObject(new { login = Data.userSession.login, roomId = roomId });
+        buffer.WriteString(json);
+        SendData(buffer.ToArray());
+        buffer.Dispose();
+    }
+
     public static void Send_QuickPlayMoveData(QuickPlayMoveData quickPlayMoveData)
     {
         PacketBuffer buffer = new PacketBuffer();
