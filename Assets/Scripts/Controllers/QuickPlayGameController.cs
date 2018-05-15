@@ -23,6 +23,7 @@ public class QuickPlayGameController : MonoBehaviour
 
     private QuickPlaySessionInfo quickPlaySessionInfoObject;
     private QuickPlaySessionData quickPlaySessionDataObject;
+    private QuickPlaySessionNewRound quickPlaySessionNewRoundObject;
 
     private bool myMove;
 
@@ -39,6 +40,7 @@ public class QuickPlayGameController : MonoBehaviour
     public DeckZone[] myMid = new DeckZone[5];
     public DeckZone[] myBot = new DeckZone[5];
     public PlayableCard[] myHand = new PlayableCard[5];
+    public PlayableCard[] fantasy = new PlayableCard[14];
     public Image[] myTrunk = new Image[4];
 
     public Image[] oppTop = new Image[3];
@@ -76,6 +78,13 @@ public class QuickPlayGameController : MonoBehaviour
     public GameObject gameOver;
     public Image winner;
     public bool newHand = false;
+
+    public bool myFantasy = false;
+    public bool oppFantasy = false;
+
+    public GameObject normalHand;
+    public GameObject fantasyHand;
+    public GameObject fantasyDead;
 
     private void Awake()
     {
@@ -129,6 +138,10 @@ public class QuickPlayGameController : MonoBehaviour
     {
         Debug.Log("STARTED RESETING");
         Confirm.interactable = false;
+
+        normalHand.SetActive(true);
+        fantasyHand.SetActive(false);
+        fantasyDead.SetActive(false);
 
         foreach (DeckZone card in myTop)
         {
@@ -228,6 +241,61 @@ public class QuickPlayGameController : MonoBehaviour
 
     private void OnQuickGameNewRound(QuickPlaySessionNewRound quickPlaySessionNewRound)
     {
+        quickPlaySessionNewRoundObject = quickPlaySessionNewRound;
+
+        if (myFantasy || oppFantasy)
+        {
+            Debug.Log("Пришла инфа о ходе соперника");
+            foreach (Image card in oppHand)
+            {
+                card.sprite = None;
+            }
+
+            string[] cards = quickPlaySessionNewRound.hand.Split(',');
+
+            Debug.Log("Начали цикл");
+            int k = 0;
+            for (int j = 0; j < 3; j++)
+            {
+                Debug.Log("i: " + k.ToString());
+                Debug.Log("Placing: " + cards[k]);
+                DrawCard(cards[k], oppDeck[0][j]);
+                k += 1;
+            }
+            for (int j = 0; j < 5; j++)
+            {
+                Debug.Log("i: " + k.ToString());
+                Debug.Log("Placing: " + cards[k]);
+                DrawCard(cards[k], oppDeck[1][j]);
+                k += 1;
+            }
+            for (int j = 0; j < 5; j++)
+            {
+                Debug.Log("i: " + k.ToString());
+                Debug.Log("Placing: " + cards[k]);
+                DrawCard(cards[k], oppDeck[2][j]);
+                k += 1;
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                if (quickPlaySessionNewRound.oppHandStr[i] != "")
+                {
+                    oppCombinations[i].SetActive(true);
+                    string combination = quickPlaySessionNewRound.oppHandStr[i].Split('.')[0];
+                    int royalty = 0;
+                    if (quickPlaySessionNewRound.oppHandStr[i][quickPlaySessionNewRound.oppHandStr[i].Length - 1] != '.')
+                    {
+                        royalty = int.Parse(quickPlaySessionNewRound.oppHandStr[i].Split('.')[1]);
+                        oppRoyalties[i].SetActive(true);
+                        oppRoyalties[i].GetComponentInChildren<Text>().text = royalty.ToString();
+
+                    }
+                    oppCombinations[i].GetComponentInChildren<Text>().text = combination;
+                }
+            }
+        }
+
         if (quickPlaySessionNewRound.myBroken)
         {
             foreach (DeckZone card in myTop)
@@ -293,21 +361,29 @@ public class QuickPlayGameController : MonoBehaviour
 
         if (quickPlaySessionNewRound.winner != "")
         {
-            gameOver.SetActive(true);
-            if (quickPlaySessionNewRound.winner == Data.userSession.login)
-            {
-                winner.sprite = Sprite.Create(Data.userImageTexture, new Rect(0.0f, 0.0f, Data.userImageTexture.width, Data.userImageTexture.height), new Vector2(0.5f, 0.5f), 100.0f);
-                gameOver.GetComponentInChildren<Text>().text = quickPlaySessionNewRound.winner + " won!";
-            }
-            else
-            {
-                winner.sprite = DecodeImage(quickPlaySessionInfoObject.enemyImage, quickPlaySessionInfoObject.enemyImageScale);
-                gameOver.GetComponentInChildren<Text>().text = quickPlaySessionNewRound.winner + " won!";
-            }
+            Invoke("GameOver", 8);
         }
         else
         {
             ClientTCP.Send_RequestQuickPlayNewRound(roomID);
+        }
+
+        myFantasy = quickPlaySessionNewRound.myFantasy;
+        oppFantasy = quickPlaySessionNewRound.oppFantasy;
+    }
+
+    private void GameOver()
+    {
+        gameOver.SetActive(true);
+        if (quickPlaySessionNewRoundObject.winner == Data.userSession.login)
+        {
+            winner.sprite = Sprite.Create(Data.userImageTexture, new Rect(0.0f, 0.0f, Data.userImageTexture.width, Data.userImageTexture.height), new Vector2(0.5f, 0.5f), 100.0f);
+            gameOver.GetComponentInChildren<Text>().text = quickPlaySessionNewRoundObject.winner + " won!";
+        }
+        else
+        {
+            winner.sprite = DecodeImage(quickPlaySessionInfoObject.enemyImage, quickPlaySessionInfoObject.enemyImageScale);
+            gameOver.GetComponentInChildren<Text>().text = quickPlaySessionNewRoundObject.winner + " won!";
         }
     }
 
@@ -323,74 +399,56 @@ public class QuickPlayGameController : MonoBehaviour
             ResetCards();
         }
 
-        if (!quickPlaySessionData.myTurn)
+        if (myFantasy)
         {
-            Debug.Log("OPPONENT's TURN");
-            if (quickPlaySessionData.firstHand)
+            if (quickPlaySessionData.myTurn)
             {
-                // Opponent's Turn
+                normalHand.SetActive(false);
+                fantasyHand.SetActive(true);
+                
+
+                foreach (Image card in oppTop)
+                {
+                    card.sprite = Back;
+                }
+                foreach (Image card in oppMid)
+                {
+                    card.sprite = Back;
+                }
+                foreach (Image card in oppBot)
+                {
+                    card.sprite = Back;
+                }
+
                 int i = 0;
                 foreach (string card in quickPlaySessionData.hand.Split(','))
                 {
                     Debug.Log("Card" + card);
-                    DrawCard(card, oppHand[i]);
+                    DrawCard(card, fantasy[i].image);
+                    fantasy[i].value = card;
+                    fantasy[i].GetComponent<Button>().interactable = true;
                     i++;
                 }
             }
-            else
-            {
-                if (quickPlaySessionDataObject.oppHandRanks[0] > 0 &&
-                    quickPlaySessionDataObject.oppHandRanks[1] > 0 &&
-                    quickPlaySessionDataObject.oppHandRanks[2] > 0)
-                {
-                    // End of Game
-                }
-                else
-                {
-                    oppHand[0].sprite = Back;
-                    oppHand[1].sprite = Back;
-                    oppHand[2].sprite = Back;
-                }
-            }
 
-            foreach  (PlayableCard card in myHand)
-            {
-                card.GetComponent<Button>().interactable = false;
-            }
         }
-        else
+        else if (oppFantasy)
         {
-            Debug.Log("MyTurn");
-            if (quickPlaySessionData.position != "")
+            foreach (Image card in oppTop)
             {
-                Debug.Log("Пришла инфа о ходе соперника");
-                foreach (Image card in oppHand)
-                {
-                    card.sprite = None;
-                }
-
-                string[] cards = quickPlaySessionData.opponentHand.Split(',');
-
-                Debug.Log("Начали цикл");
-                for (int j = 0; j < quickPlaySessionData.position.Length; j += 2)
-                {
-                    Debug.Log(quickPlaySessionData.position[j]);
-                    if (int.Parse(quickPlaySessionData.position[j] + "") == 3)
-                    {
-                        oppTrunk[oppTrunkNum].sprite = Back;
-                        oppTrunkNum += 1;
-                    }
-                    else
-                        DrawCard(cards[j / 2], oppDeck[int.Parse(quickPlaySessionData.position[j] + "")][int.Parse(quickPlaySessionData.position[j + 1] + "")]);
-                }
+                card.sprite = Back;
+            }
+            foreach (Image card in oppMid)
+            {
+                card.sprite = Back;
+            }
+            foreach (Image card in oppBot)
+            {
+                card.sprite = Back;
             }
 
-            if (quickPlaySessionData.hand != "")
+            if (quickPlaySessionData.myTurn)
             {
-                oppHand[0].sprite = None;
-                oppHand[1].sprite = None;
-                oppHand[2].sprite = None;
-
                 Debug.Log("My turn.");
                 int i = 0;
                 foreach (string card in quickPlaySessionData.hand.Split(','))
@@ -401,20 +459,118 @@ public class QuickPlayGameController : MonoBehaviour
                     i++;
 
                 }
-            }
 
-            if (quickPlaySessionData.firstHand)
+                if (quickPlaySessionData.firstHand)
+                {
+                    foreach (PlayableCard card in myHand)
+                    {
+                        card.GetComponent<Button>().interactable = true;
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        myHand[j].GetComponent<Button>().interactable = true;
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (!quickPlaySessionData.myTurn)
             {
+                Debug.Log("OPPONENT's TURN");
+                if (quickPlaySessionData.firstHand)
+                {
+                    // Opponent's Turn
+                    int i = 0;
+                    foreach (string card in quickPlaySessionData.hand.Split(','))
+                    {
+                        Debug.Log("Card" + card);
+                        DrawCard(card, oppHand[i]);
+                        i++;
+                    }
+                }
+                else
+                {
+                    if (quickPlaySessionDataObject.oppHandRanks[0] > 0 &&
+                        quickPlaySessionDataObject.oppHandRanks[1] > 0 &&
+                        quickPlaySessionDataObject.oppHandRanks[2] > 0)
+                    {
+                        // End of Game
+                    }
+                    else
+                    {
+                        oppHand[0].sprite = Back;
+                        oppHand[1].sprite = Back;
+                        oppHand[2].sprite = Back;
+                    }
+                }
+
                 foreach (PlayableCard card in myHand)
                 {
-                    card.GetComponent<Button>().interactable = true;
+                    card.GetComponent<Button>().interactable = false;
                 }
             }
             else
             {
-                for (int i = 0; i < 3; i++)
+                Debug.Log("MyTurn");
+                if (quickPlaySessionData.position != "")
                 {
-                    myHand[i].GetComponent<Button>().interactable = true;
+                    Debug.Log("Пришла инфа о ходе соперника");
+                    foreach (Image card in oppHand)
+                    {
+                        card.sprite = None;
+                    }
+
+                    string[] cards = quickPlaySessionData.opponentHand.Split(',');
+
+                    Debug.Log("Начали цикл");
+                    for (int j = 0; j < quickPlaySessionData.position.Length; j += 2)
+                    {
+                        Debug.Log(quickPlaySessionData.position[j]);
+                        if (int.Parse(quickPlaySessionData.position[j] + "") == 3)
+                        {
+                            oppTrunk[oppTrunkNum].sprite = Back;
+                            oppTrunkNum += 1;
+                        }
+                        else
+                            DrawCard(cards[j / 2], oppDeck[int.Parse(quickPlaySessionData.position[j] + "")][int.Parse(quickPlaySessionData.position[j + 1] + "")]);
+                    }
+                }
+
+                if (quickPlaySessionData.hand != "")
+                {
+                    oppHand[0].sprite = None;
+                    oppHand[1].sprite = None;
+                    oppHand[2].sprite = None;
+
+                    Debug.Log("My turn.");
+                    int i = 0;
+                    foreach (string card in quickPlaySessionData.hand.Split(','))
+                    {
+                        Debug.Log("Card" + card);
+                        DrawCard(card, myHand[i].image);
+                        myHand[i].value = card;
+                        i++;
+
+                    }
+                }
+
+                if (quickPlaySessionData.firstHand)
+                {
+                    foreach (PlayableCard card in myHand)
+                    {
+                        card.GetComponent<Button>().interactable = true;
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        myHand[i].GetComponent<Button>().interactable = true;
+                    }
                 }
             }
         }
@@ -461,21 +617,48 @@ public class QuickPlayGameController : MonoBehaviour
     public void ConfirmMove()
     {
         Confirm.interactable = false;
+
         string result = "";
-        for (int i = 0; i < 3; i++)
+        if (myFantasy)
         {
-            if (myHand[i].position == "")
+            for (int i = 0; i < 14; i++)
             {
-                myHand[i].position = "3" + myTrunkNum.ToString();
-                DrawCard(myHand[i].value, myTrunk[myTrunkNum]);
-                myTrunkNum += 1;
+                if (fantasy[i].position == "")
+                {
+                    fantasy[i].position = "30";
+                    DrawCard(fantasy[i].value, fantasyDead.GetComponent<Image>());
+                }
             }
-        }
-        foreach (PlayableCard card in myHand)
-        {
-            if (card.position != "")
+
+            foreach (PlayableCard card in fantasy)
             {
-                result += card.position;
+                card.GetComponent<Button>().interactable = false;
+                if (card.position != "")
+                {
+                    result += card.position;
+                    card.position = "";
+                    card.image.sprite = Blank;
+                }
+            }
+
+        }
+        else
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (myHand[i].position == "")
+                {
+                    myHand[i].position = "3" + myTrunkNum.ToString();
+                    DrawCard(myHand[i].value, myTrunk[myTrunkNum]);
+                    myTrunkNum += 1;
+                }
+            }
+            foreach (PlayableCard card in myHand)
+            {
+                if (card.position != "")
+                {
+                    result += card.position;
+                }
             }
         }
         foreach (DeckZone card in myTop)
@@ -494,11 +677,13 @@ public class QuickPlayGameController : MonoBehaviour
         QuickPlayMoveData moveData = new QuickPlayMoveData
         {
             roomId = roomID,
-            position = result
+            position = result,
+            login = Data.userSession.login
         };
 
         foreach (PlayableCard card in myHand)
         {
+            card.GetComponent<Button>().interactable = false;
             if (card.position != "")
             {
                 card.position = "";
@@ -524,24 +709,47 @@ public class QuickPlayGameController : MonoBehaviour
     {
 
         int placed = 0;
-        foreach (PlayableCard card in myHand)
+        if (myFantasy)
         {
-            if (card.position != "")
+            foreach (PlayableCard card in fantasy)
             {
-                placed++;
+                if (card.position != "")
+                {
+                    placed++;
+                    Debug.Log(placed);
+                }
             }
-        }
-        if (placed == 2 && !quickPlaySessionDataObject.firstHand)
-        {
-            Confirm.interactable = true;
-        }
-        else if (placed == 5 && quickPlaySessionDataObject.firstHand)
-        {
-            Confirm.interactable = true;
+            if (placed == 13)
+            {
+                Confirm.interactable = true;
+            }
+            else
+            {
+                Confirm.interactable = false;
+            }
         }
         else
         {
-            Confirm.interactable = false;
+            foreach (PlayableCard card in myHand)
+            {
+                if (card.position != "")
+                {
+                    placed++;
+                    Debug.Log(placed);
+                }
+            }
+            if (placed == 2 && !quickPlaySessionDataObject.firstHand)
+            {
+                Confirm.interactable = true;
+            }
+            else if (placed == 5 && quickPlaySessionDataObject.firstHand)
+            {
+                Confirm.interactable = true;
+            }
+            else
+            {
+                Confirm.interactable = false;
+            }
         }
     }
 

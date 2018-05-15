@@ -25,7 +25,10 @@ public class QuickPlaySessionNewRound
     public string winner;
     public bool myBroken;
     public bool oppBroken;
-
+    public bool myFantasy;
+    public bool oppFantasy;
+    public string hand;
+    public string[] oppHandStr;
 }
 
 public class QuickPlaySessionInfo
@@ -76,6 +79,8 @@ public class QuickPlayMoveData
     public int roomId;
 
     public string position;
+
+    public string login;
 }
 
 public class MoveLog
