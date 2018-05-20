@@ -20,7 +20,6 @@ public class Menu : MonoBehaviour {
     public Text U_login;
     public Text U_gold;
     public Text U_lvl;
-    public float U_progress;
     public Text U_rating;
     public Text U_energy;
 
@@ -41,7 +40,7 @@ public class Menu : MonoBehaviour {
         else
         {
             loggedIn = true;
-            menuBar.transform.position += new Vector3(105,0);
+            menuBar.SetActive(true);
             ClientTCP.Send_RequestUserAccountDataUpdate(Data.userSession.login);
             WindowSetActive(3);
         }
@@ -67,9 +66,15 @@ public class Menu : MonoBehaviour {
 
     public void QuickGame()
     {
-        menuBar.transform.position -= new Vector3(105, 0);
+        menuBar.SetActive(false);
         ClientTCP.Send_RequestEnterQuickPlay(Data.userSession);
         WindowSetActive(4);
+    }
+
+    public void OpenAvatarEditor()
+    {
+        menuBar.SetActive(false);
+        WindowSetActive(5);
     }
 
     // Windows controller
@@ -108,8 +113,7 @@ public class Menu : MonoBehaviour {
         //U_char_3.text = Data.userSession.mainTeam[2].name + "(" + Data.userSession.mainTeam[2].power + ", lvl:" + Data.userSession.mainTeam[2].lvl + ")";
 
         U_lvl.text = (Data.userSession.experience / 100).ToString();
-        U_progress = (float)((Data.userSession.experience % 100) * 1.7);
-        U_progressBar.GetComponent<RectTransform>().sizeDelta = new Vector2(U_progress, 20);
+        U_progressBar.GetComponent<RectTransform>().localScale = new Vector3(((float)(Data.userSession.experience % 100) / 100.0F), 0.6F);
     }
 
     public void ShowLoginWindow()
@@ -117,7 +121,7 @@ public class Menu : MonoBehaviour {
         if (loggedIn)
         {
             loggedIn = false;
-            menuBar.transform.position -= new Vector3(105, 0);
+            menuBar.SetActive(false);
             ClientTCP.Send_UserLogout();
             Data.userSession = null;
             U_login.text = "Login";
@@ -139,7 +143,7 @@ public class Menu : MonoBehaviour {
     private void OnUserLogin(UserSession userSession)
     {
         Data.userSession = userSession;
-        menuBar.transform.position += new Vector3(105, 0);
+        menuBar.SetActive(true);
         ShowUserAccountWindow();
     }
 
@@ -177,6 +181,10 @@ public class Menu : MonoBehaviour {
     public void ShowMainWindow()
     {
         ClientTCP.Send_RequestUserAccountDataUpdate(Data.userSession.login);
+        if (!menuBar.activeSelf)
+        {
+            menuBar.SetActive(true);
+        }
         WindowSetActive(3);
     }
 

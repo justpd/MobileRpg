@@ -105,6 +105,7 @@ public class PrePainter : MonoBehaviour {
 		
         ClientTCP.Send_Base64Image(b64str, scale, Data.userSession.login);
 
+
     }
 
 }
