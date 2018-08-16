@@ -20,6 +20,7 @@ public enum ServerPackets
 // Client -> Server
 public enum ClientPackets
 {
+    C_AdminDeck = 111110,
     C_RequestUserLogout = 505000,
     C_ConfirmConnection = 505001,
     C_RequestUserLogin = 505002,

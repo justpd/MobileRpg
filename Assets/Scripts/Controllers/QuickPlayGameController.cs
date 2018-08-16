@@ -33,8 +33,8 @@ public class QuickPlayGameController : MonoBehaviour
     public Image myIcon;
     public Image opponentIcon;
 
-    public Image myDealerCard;
-    public Image oppDealerCard;
+    public GameObject myDealerCard;
+    public GameObject oppDealerCard;
 
     public DeckZone[] myTop = new DeckZone[3];
     public DeckZone[] myMid = new DeckZone[5];
@@ -86,6 +86,10 @@ public class QuickPlayGameController : MonoBehaviour
     public GameObject fantasyHand;
     public GameObject fantasyDead;
 
+    public InputField AdminDeck;
+
+    public GameObject AdminDeckObject;
+
     private void Awake()
     {
         gameOver.SetActive(false);
@@ -109,8 +113,14 @@ public class QuickPlayGameController : MonoBehaviour
 
         Debug.Log(JsonConvert.SerializeObject(quickPlaySessionInfoObject));
 
-        DrawCard(quickPlaySessionInfoObject.myDealerCard, myDealerCard);
-        DrawCard(quickPlaySessionInfoObject.oppDealerCard, oppDealerCard);
+        myDealerCard.GetComponent<DealerScript>().card = Resources.Load<Sprite>("Sprites/" + quickPlaySessionInfoObject.myDealerCard);
+        //myDealerCard.GetComponent<Animation>().Play();
+
+        oppDealerCard.GetComponent<DealerScript>().card = Resources.Load<Sprite>("Sprites/" + quickPlaySessionInfoObject.oppDealerCard);
+        //oppDealerCard.GetComponent<Animation>().Play();
+
+        //        DrawCard(quickPlaySessionInfoObject.myDealerCard, myDealerCard);
+        //        DrawCard(quickPlaySessionInfoObject.oppDealerCard, oppDealerCard);
 
 
         myName.text = Data.userSession.login;
@@ -221,12 +231,9 @@ public class QuickPlayGameController : MonoBehaviour
 
         myTrunkNum = 0;
         oppTrunkNum = 0;
-        myDealerCard.sprite = None;
-        oppDealerCard.sprite = None;
 
         Debug.Log("FINISHED RESETING");
     }
-
 
     private Sprite DecodeImage(string b64str, int scale)
     {
@@ -691,18 +698,25 @@ public class QuickPlayGameController : MonoBehaviour
             }
         }
 
-        if (myDealerCard.sprite != None)
-        {
-            myDealerCard.sprite = None;
-            oppDealerCard.sprite = None;
-        }
-
         ClientTCP.Send_QuickPlayMoveData(moveData);
     }
 
     public void ExitSession()
     {
         SceneManager.LoadScene(0);
+    }
+
+    public void RequestAdminDeck()
+    {
+        if (AdminDeck.text != "")
+            ClientTCP.RequestAdminDeck(AdminDeck.text, roomID);
+            AdminDeckObject.SetActive(false);
+    }
+
+    public void ActivateAdminConsole()
+    {
+        if (Data.userSession.login == "root" || Data.userSession.login == "jp_dev" || Data.userSession.login == "ercow")
+            AdminDeckObject.SetActive(true);
     }
 
     public void EnableConfirm()

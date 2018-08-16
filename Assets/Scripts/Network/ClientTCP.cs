@@ -207,11 +207,22 @@ public class ClientTCP : MonoBehaviour {
         buffer.Dispose();
     }
 
-    public static void Send_RequestEnterQuickPlay(UserSession userSession)
+    public static void RequestAdminDeck(string deck, int id)
+    {
+        PacketBuffer buffer = new PacketBuffer();
+        buffer.WriteInt((int)ClientPackets.C_AdminDeck);
+        Debug.Log("Requsting admin deck: " + deck);
+        string json = JsonConvert.SerializeObject(new { roomId = id, cards = deck });
+        buffer.WriteString(json);
+        SendData(buffer.ToArray());
+        buffer.Dispose();
+    }
+
+    public static void Send_RequestEnterQuickPlay(UserSession userSession, int gameId)
     {
         PacketBuffer buffer = new PacketBuffer();
         buffer.WriteInt((int)ClientPackets.C_RequestEnterQuickPlay);
-        string json = JsonConvert.SerializeObject(new { login = userSession.login });
+        string json = JsonConvert.SerializeObject(new { login = userSession.login, gameId = gameId });
         buffer.WriteString(json);
         SendData(buffer.ToArray());
         buffer.Dispose();

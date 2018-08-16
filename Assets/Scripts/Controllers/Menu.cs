@@ -64,10 +64,10 @@ public class Menu : MonoBehaviour {
 
     }
 
-    public void QuickGame()
+    public void QuickGame(int id)
     {
         menuBar.SetActive(false);
-        ClientTCP.Send_RequestEnterQuickPlay(Data.userSession);
+        ClientTCP.Send_RequestEnterQuickPlay(Data.userSession, id);
         WindowSetActive(4);
     }
 
@@ -108,11 +108,34 @@ public class Menu : MonoBehaviour {
         U_gold.text =  Data.userSession.gold.ToString();
         U_energy.text = Data.userSession.energy.ToString();
         U_rating.text = Data.userSession.rating.ToString();
-        //U_char_1.text = Data.userSession.mainTeam[0].name + "(" + Data.userSession.mainTeam[0].power + ", lvl:" + Data.userSession.mainTeam[0].lvl + ")";
-        //U_char_2.text = Data.userSession.mainTeam[1].name + "(" + Data.userSession.mainTeam[1].power + ", lvl:" + Data.userSession.mainTeam[1].lvl + ")";
-        //U_char_3.text = Data.userSession.mainTeam[2].name + "(" + Data.userSession.mainTeam[2].power + ", lvl:" + Data.userSession.mainTeam[2].lvl + ")";
-
-        U_lvl.text = (Data.userSession.experience / 100).ToString();
+        int lvl = (Data.userSession.experience / 100);
+        switch(lvl)
+        {
+            case 0:
+                U_lvl.text = "Fish";
+                break;
+            case 1:
+                U_lvl.text = "Newbie";
+                break;
+            case 2:
+                U_lvl.text = "Bronze";
+                break;
+            case 3:
+                U_lvl.text = "Silver";
+                break;
+            case 4:
+                U_lvl.text = "Gold";
+                break;
+            case 5:
+                U_lvl.text = "Pro";
+                break;
+            case 6:
+                U_lvl.text = "Star";
+                break;
+            default:
+                U_lvl.text = "Admin";
+                break;
+        }
         U_progressBar.GetComponent<RectTransform>().localScale = new Vector3(((float)(Data.userSession.experience % 100) / 100.0F), 0.6F);
     }
 
@@ -124,6 +147,8 @@ public class Menu : MonoBehaviour {
             menuBar.SetActive(false);
             ClientTCP.Send_UserLogout();
             Data.userSession = null;
+            Data.userImageTexture = null;
+            Data.userImageScale = 0;
             U_login.text = "Login";
         }
         WindowSetActive(1);
