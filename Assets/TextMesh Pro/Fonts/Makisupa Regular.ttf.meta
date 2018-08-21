@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: f7484a94cc4de4842ba252731a20d03f
+timeCreated: 1503045448
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Makisupa
+  fontNames:
+  - Makisupa
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

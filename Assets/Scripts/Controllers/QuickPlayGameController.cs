@@ -134,7 +134,7 @@ public class QuickPlayGameController : MonoBehaviour
         Debug.Log(quickPlaySessionData.moveInfo.skillCount);
         Debug.Log(quickPlaySessionData.moveInfo.classID);
 
-        SkillBar.transform.position = new Vector3(-10 + (3 - quickPlaySessionData.moveInfo.skillCount) * 110, 15,0);
+        SkillBar.transform.position = new Vector3(-10 + (3 - quickPlaySessionData.moveInfo.skillCount) * 110, 15, 0);
 
         CheckTargets();
         UpdateUI();
